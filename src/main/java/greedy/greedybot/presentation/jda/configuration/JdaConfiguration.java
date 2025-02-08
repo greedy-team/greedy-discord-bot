@@ -18,6 +18,7 @@ public class JdaConfiguration {
 
     @Bean
     JDA jda() {
+        // ref https://ci.dv8tion.net/job/JDA/javadoc/net/dv8tion/jda/api/requests/GatewayIntent.html
         final EnumSet<GatewayIntent> intents = EnumSet.of(
                 GatewayIntent.GUILD_MESSAGES,
                 GatewayIntent.GUILD_MEMBERS,
