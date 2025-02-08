@@ -3,4 +3,4 @@ spring:
     name: greedy-bot
 
   profiles:
-    include: discord
+    active: discord
