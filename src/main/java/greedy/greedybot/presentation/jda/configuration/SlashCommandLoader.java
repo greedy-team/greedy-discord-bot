@@ -25,14 +25,14 @@ public class SlashCommandLoader {
 
     @PostConstruct
     void loadCommands() {
-        List<String> commandNames = slashCommandListeners.stream()
+        final List<String> commandNames = slashCommandListeners.stream()
                 .map(SlashCommandListener::getCommandName)
                 .toList();
-        log.info("[LOAD COMMANDS]: {}", commandNames);
-
-        List<SlashCommandData> commandData = slashCommandListeners.stream()
+        final List<SlashCommandData> commandData = slashCommandListeners.stream()
                 .map(SlashCommandListener::getCommandData)
                 .toList();
+
+        log.info("[LOAD COMMANDS]: {}", commandNames);
         greedyGuild.updateCommands().addCommands(commandData).queue();
         log.info("[COMMANDS LOADED SUCCESSFULLY]: {}", commandNames);
     }
