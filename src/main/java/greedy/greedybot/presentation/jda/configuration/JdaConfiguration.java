@@ -15,13 +15,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class JdaConfiguration {
 
+    private final SlashCommandListenerMapper slashCommandListenerMapper;
     @Value("${discord.token}")
     private String token;
-
     @Value("${discord.guild_id}")
     private String guildId;
-
-    private final SlashCommandListenerMapper slashCommandListenerMapper;
 
     public JdaConfiguration(final SlashCommandListenerMapper slashCommandListenerMapper) {
         this.slashCommandListenerMapper = slashCommandListenerMapper;
