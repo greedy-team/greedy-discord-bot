@@ -1,10 +1,11 @@
 package greedy.greedybot.presentation.jda.configuration;
 
-import greedy.greedybot.presentation.jda.listener.StatusCommandListener;
+import greedy.greedybot.presentation.jda.listener.SlashCommandListener;
 import jakarta.annotation.PostConstruct;
+import java.util.List;
+import java.util.Set;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -15,22 +16,24 @@ public class SlashCommandLoader {
     private static final Logger log = LoggerFactory.getLogger(SlashCommandLoader.class);
 
     private final Guild greedyGuild;
-    private final StatusCommandListener statusCommandListener;
+    private final Set<SlashCommandListener> slashCommandListeners;
 
-    public SlashCommandLoader(final Guild greedyGuild, final StatusCommandListener statusCommandListener) {
+    public SlashCommandLoader(final Guild greedyGuild, final Set<SlashCommandListener> slashCommandListeners) {
         this.greedyGuild = greedyGuild;
-        this.statusCommandListener = statusCommandListener;
+        this.slashCommandListeners = slashCommandListeners;
     }
 
     @PostConstruct
     void loadCommands() {
-        log.info("Load command: {}", statusCommandListener.getCommandName());
+        List<String> commandNames = slashCommandListeners.stream()
+                .map(SlashCommandListener::getCommandName)
+                .toList();
+        log.info("[LOAD COMMANDS]: {}", commandNames);
 
-        greedyGuild.updateCommands().addCommands(
-                Commands.slash(statusCommandListener.getCommandName(), "Check the status of the bot")
-                        .addOption(OptionType.STRING, "ping", "Ping the bot")
-                        .addOption(OptionType.STRING, "ok", "Check the status of the bot")
-                        .addOption(OptionType.STRING, "hello", "Hello the bot")
-        ).queue();
+        List<SlashCommandData> commandData = slashCommandListeners.stream()
+                .map(SlashCommandListener::getCommandData)
+                .toList();
+        greedyGuild.updateCommands().addCommands(commandData).queue();
+        log.info("[COMMANDS LOADED SUCCESSFULLY]: {}", commandNames);
     }
 }
