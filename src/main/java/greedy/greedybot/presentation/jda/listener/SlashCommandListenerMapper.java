@@ -27,6 +27,11 @@ public class SlashCommandListenerMapper extends ListenerAdapter {
         final String commandName = event.getName();
 
         final SlashCommandListener slashCommand = slashCommandListenersByCommandName.get(commandName);
+        if (slashCommand == null) {
+            log.error("NOT FOUND COMMAND: {}", commandName);
+            return;
+        }
+
         log.info("[RECEIVED DISCORD SLASH COMMAND] : {}", commandName);
         slashCommand.onAction(event);
     }
