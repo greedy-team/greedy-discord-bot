@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,8 @@ public class JdaConfiguration {
     private String token;
     @Value("${discord.guild_id}")
     private String guildId;
+    @Value("${discord.google_form_watch_channel_id}")
+    private String channelId;
 
     public JdaConfiguration(final SlashCommandListenerMapper slashCommandListenerMapper) {
         this.slashCommandListenerMapper = slashCommandListenerMapper;
@@ -47,5 +50,10 @@ public class JdaConfiguration {
     @Bean
     Guild greedyGuild(JDA jda) {
         return jda.getGuildById(guildId);
+    }
+
+    @Bean
+    TextChannel googleFormWatchChannel(JDA jda) {
+        return jda.getTextChannelById(channelId);
     }
 }
