@@ -40,7 +40,7 @@ public class SlashCommandListenerMapper extends ListenerAdapter {
             log.warn("[WARN]: {}", e.getMessage());
             event.getHook().sendMessage(e.getMessage()).queue();
         } catch (Exception e) {
-            log.error("[ERROR OCCURRED]: {}", commandName);
+            log.error("[ERROR OCCURRED]: {}, {}", commandName, e.getStackTrace());
             event.getHook().sendMessage(e.getMessage()).queue();
         }
     }

@@ -1,5 +1,6 @@
 package greedy.greedybot.domain.form;
 
+import greedy.greedybot.common.exception.GreedyBotException;
 import java.util.Optional;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.springframework.context.annotation.Lazy;
@@ -27,7 +28,9 @@ public class GoogleFormWatchDiscordRepository {
                 .stream()
                 .filter(message -> message.getContentDisplay().contains(formId))
                 .findAny()
-                .orElseThrow(() -> new RuntimeException("Not Found FormId"));
+                .orElseThrow(() -> new GreedyBotException("존재 하지 않는 구글폼 감지기입니다"))
+                .delete()
+                .queue();
     }
 
     public Optional<GoogleFormWatch> findByFormId(final String formId) {
