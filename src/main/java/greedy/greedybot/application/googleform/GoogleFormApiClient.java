@@ -1,15 +1,18 @@
 package greedy.greedybot.application.googleform;
 
 import greedy.greedybot.application.googleform.dto.GoogleFormInformationResponse;
+import greedy.greedybot.application.googleform.dto.GoogleFormResponsesData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 @Component
 public class GoogleFormApiClient {
 
-    private static final String GOOGLE_FORM_API_ENDPOINT = "https://forms.googleapis.com/v1/forms/{formId}";
+    private static final String GET_FORM_ENDPOINT = "https://forms.googleapis.com/v1/forms/{formId}";
+    private static final String LIST_RESPONSE_ENDPOINT = "https://forms.googleapis.com/v1/forms/{formId}/responses";
 
     private static final Logger log = LoggerFactory.getLogger(GoogleFormApiClient.class);
 
@@ -21,12 +24,23 @@ public class GoogleFormApiClient {
 
     // ref: https://developers.google.com/forms/api/reference/rest/v1/forms/get
     public GoogleFormInformationResponse readForm(String formId, String accessToken) {
-        log.info("[READ FORM INFO]: {}", formId);
         return restClient.get()
-                .uri(GOOGLE_FORM_API_ENDPOINT, formId)
-                .header("Authorization", "Bearer " + accessToken)
+                .uri(GET_FORM_ENDPOINT, formId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .retrieve()
                 //.onStatus(HttpStatusCode::is4xxClientError, ) TODO: error handling
                 .body(GoogleFormInformationResponse.class);
+    }
+
+    // ref: https://developers.google.com/forms/api/reference/rest/v1/forms.responses/list
+    public int readFormResponseCount(String formId, String accessToken) {
+        return restClient.get()
+                .uri(LIST_RESPONSE_ENDPOINT, formId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .retrieve()
+                //.onStatus(HttpStatusCode::is4xxClientError, ) TODO: error handling
+                .body(GoogleFormResponsesData.class)
+                .responses()
+                .size();
     }
 }
