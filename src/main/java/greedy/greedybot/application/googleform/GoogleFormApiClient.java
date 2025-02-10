@@ -1,7 +1,7 @@
 package greedy.greedybot.application.googleform;
 
-import greedy.greedybot.application.googleform.dto.GoogleFormInformationResponse;
-import greedy.greedybot.application.googleform.dto.GoogleFormResponsesData;
+import greedy.greedybot.application.googleform.dto.client.GoogleFormInformationResponse;
+import greedy.greedybot.application.googleform.dto.client.GoogleFormResponsesData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
