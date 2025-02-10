@@ -1,5 +1,7 @@
 package greedy.greedybot.presentation.jda.listener;
 
+import greedy.greedybot.application.googleform.GoogleFormService;
+import greedy.greedybot.application.googleform.dto.EnrollFormWatchResult;
 import java.util.Objects;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -15,8 +17,13 @@ import org.springframework.stereotype.Component;
 public class EnrollGoogleFormWatchCommandListener implements SlashCommandListener {
 
     private static final String FORM_ID_KEY = "form_id";
+    private static final Logger log = LoggerFactory.getLogger(EnrollGoogleFormWatchCommandListener.class);
 
-    private final Logger log = LoggerFactory.getLogger(EnrollGoogleFormWatchCommandListener.class);
+    private final GoogleFormService googleFormService;
+
+    public EnrollGoogleFormWatchCommandListener(final GoogleFormService googleFormService) {
+        this.googleFormService = googleFormService;
+    }
 
     public String getCommandName() {
         return "form-add";
@@ -38,10 +45,17 @@ public class EnrollGoogleFormWatchCommandListener implements SlashCommandListene
             event.reply("Form id is required").queue();
             return;
         }
-
         String formId = optionalFormId.getAsString();
         log.info("[RECEIVED ADD FORM ID]: {}", formId);
 
-        event.reply("Delivered form id: " + formId).queue();
+        event.deferReply().queue();
+        EnrollFormWatchResult result = googleFormService.enrollFormWatch(formId);
+        log.info("[ENROLL FORM WATCH]: {}", result);
+        event.getHook().sendMessage("""
+                        ✅ 구글폼 응답 감지기가 등록 되었어요!
+                        - 제목: %s
+                        - 등록된 응답 수: %d
+                        """.formatted(result.formTitle(), result.responseCount()))
+                .queue();
     }
 }
