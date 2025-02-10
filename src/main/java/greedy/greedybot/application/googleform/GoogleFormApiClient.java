@@ -2,9 +2,11 @@ package greedy.greedybot.application.googleform;
 
 import greedy.greedybot.application.googleform.dto.client.GoogleFormInformationResponse;
 import greedy.greedybot.application.googleform.dto.client.GoogleFormResponsesData;
+import greedy.greedybot.common.exception.GreedyBotException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -28,7 +30,11 @@ public class GoogleFormApiClient {
                 .uri(GET_FORM_ENDPOINT, formId)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .retrieve()
-                //.onStatus(HttpStatusCode::is4xxClientError, ) TODO: error handling
+                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                    throw new GreedyBotException("해당 구글폼에 접근 권한이 없습니다.");
+                }).onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
+                    throw new GreedyBotException("구글폼 API에 오류가 발생했습니다. 잠시후 다시 시도해주세요.");
+                })
                 .body(GoogleFormInformationResponse.class);
     }
 
@@ -38,7 +44,11 @@ public class GoogleFormApiClient {
                 .uri(LIST_RESPONSE_ENDPOINT, formId)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .retrieve()
-                //.onStatus(HttpStatusCode::is4xxClientError, ) TODO: error handling
+                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                    throw new GreedyBotException("해당 구글폼에 접근 권한이 없습니다.");
+                }).onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
+                    throw new GreedyBotException("구글폼 API에 오류가 발생했습니다. 잠시후 다시 시도해주세요.");
+                })
                 .body(GoogleFormResponsesData.class)
                 .responses()
                 .size();

@@ -1,5 +1,6 @@
 package greedy.greedybot.presentation.jda.listener;
 
+import greedy.greedybot.common.exception.GreedyBotException;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,6 +34,14 @@ public class SlashCommandListenerMapper extends ListenerAdapter {
         }
 
         log.info("[RECEIVED DISCORD SLASH COMMAND] : {}", commandName);
-        slashCommand.onAction(event);
+        try {
+            slashCommand.onAction(event);
+        } catch (GreedyBotException e) {
+            log.warn("[WARN]: {}", e.getMessage());
+            event.getHook().sendMessage(e.getMessage()).queue();
+        } catch (Exception e) {
+            log.error("[ERROR OCCURRED]: {}", commandName);
+            event.getHook().sendMessage(e.getMessage()).queue();
+        }
     }
 }
