@@ -38,7 +38,7 @@ public class SlashCommandListenerMapper extends ListenerAdapter {
             slashCommand.onAction(event);
         } catch (GreedyBotException e) {
             log.warn("[WARN]: {}", e.getMessage());
-            event.getHook().sendMessage(e.getMessage()).queue();
+            event.getHook().sendMessage("❌" + e.getMessage()).queue();
         } catch (Exception e) {
             log.error("[ERROR OCCURRED]: {}, {}", commandName, e.getStackTrace());
             event.getHook().sendMessage(e.getMessage()).queue();
