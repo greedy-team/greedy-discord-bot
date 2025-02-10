@@ -52,7 +52,7 @@ public class EnrollGoogleFormWatchCommandListener implements SlashCommandListene
         EnrollFormWatchResult result = googleFormService.enrollFormWatch(formId);
         log.info("[ENROLL FORM WATCH]: {}", result);
         event.getHook().sendMessage("""
-                        ✅ 구글폼 응답 감지기가 등록 되었어요!
+                        ✅ 구글폼 응답 구독이 등록 되었어요!
                         - 제목: %s
                         - 등록된 응답 수: %d
                         """.formatted(result.formTitle(), result.responseCount()))
