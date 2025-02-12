@@ -1,12 +1,3 @@
----
-name: BackEnd Feature request
-about: 백엔드 기능 이슈 템플릿입니다.
-title: ''
-labels: backend, feature
-assignees: ''
-
----
-
 ## 목적
 > 
 
