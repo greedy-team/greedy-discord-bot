@@ -1,3 +1,12 @@
+---
+name: Test task
+about: 테스트 이슈 템플릿입니다.
+title: 'test: '
+labels: test
+assignees: ''
+
+---
+
 ## 목적
 > 
 

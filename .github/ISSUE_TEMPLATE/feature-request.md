@@ -1,3 +1,12 @@
+---
+name: Feature task
+about: 기능 추가 이슈 템플릿입니다.
+title: 'feat: '
+labels: feature
+assignees: ''
+
+---
+
 ## 목적
 > 
 

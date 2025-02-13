@@ -1,8 +1,8 @@
 ---
-name: Refactor task
-about: 리팩토링 이슈 템플릿입니다.
-title: 'refactor: '
-labels: refactor
+name: Documentation task
+about: 문서 작업 이슈 템플릿입니다.
+title: 'docs: '
+labels: documentation
 assignees: ''
 
 ---

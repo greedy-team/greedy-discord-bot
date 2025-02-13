@@ -1,3 +1,12 @@
+---
+name: Chore task
+about: 설정 정보 이슈 템플릿입니다.
+title: 'chore: '
+labels: chore
+assignees: ''
+
+---
+
 ## 목적
 > 
 

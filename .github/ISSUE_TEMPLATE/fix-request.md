@@ -1,3 +1,13 @@
+---
+name: Fix task
+about: 버그 수정 이슈 템플릿입니다.
+title: 'fix: '
+labels: bug
+assignees: ''
+
+---
+
+
 ## 목적
 > 
 
