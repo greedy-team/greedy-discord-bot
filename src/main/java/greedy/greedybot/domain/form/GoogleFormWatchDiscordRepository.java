@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class GoogleFormWatchDiscordRepository {
+public class GoogleFormWatchDiscordRepository implements GoogleFormWatchRepository {
 
     private final TextChannel googleFormWatchChannel;
     private final GoogleFormWatchMapper googleFormWatchMapper;
@@ -18,11 +18,13 @@ public class GoogleFormWatchDiscordRepository {
         this.googleFormWatchMapper = googleFormWatchMapper;
     }
 
+    @Override
     public void saveGoogleFormWatch(final GoogleFormWatch googleFormWatch) {
         final String googleFormWatchText = googleFormWatchMapper.toTextEntity(googleFormWatch);
         googleFormWatchChannel.sendMessage(googleFormWatchText).queue();
     }
 
+    @Override
     public void deleteByFormId(final String formId) {
         googleFormWatchChannel.getHistory().retrievePast(100).complete()
                 .stream()
@@ -33,6 +35,7 @@ public class GoogleFormWatchDiscordRepository {
                 .queue();
     }
 
+    @Override
     public Optional<GoogleFormWatch> findByFormId(final String formId) {
         return googleFormWatchChannel.getHistory().retrievePast(100).complete()
                 .stream()

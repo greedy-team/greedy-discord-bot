@@ -4,7 +4,7 @@ import greedy.greedybot.application.googleform.dto.EnrollFormWatchResult;
 import greedy.greedybot.application.googleform.dto.client.GoogleFormInformationResponse;
 import greedy.greedybot.common.exception.GreedyBotException;
 import greedy.greedybot.domain.form.GoogleFormWatch;
-import greedy.greedybot.domain.form.GoogleFormWatchDiscordRepository;
+import greedy.greedybot.domain.form.GoogleFormWatchRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,11 +12,11 @@ public class GoogleFormService {
 
     private final GoogleCredential googleCredential;
     private final GoogleFormApiClient googleFormApiClient;
-    private final GoogleFormWatchDiscordRepository googleFormWatchDiscordRepository;
+    private final GoogleFormWatchRepository googleFormWatchDiscordRepository;
 
     public GoogleFormService(final GoogleCredential googleCredential,
                              final GoogleFormApiClient googleFormApiClient,
-                             final GoogleFormWatchDiscordRepository googleFormWatchDiscordRepository) {
+                             final GoogleFormWatchRepository googleFormWatchDiscordRepository) {
         this.googleCredential = googleCredential;
         this.googleFormApiClient = googleFormApiClient;
         this.googleFormWatchDiscordRepository = googleFormWatchDiscordRepository;
