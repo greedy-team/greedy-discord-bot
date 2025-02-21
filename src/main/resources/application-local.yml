@@ -20,6 +20,8 @@ discord:
   token: setupbottoken
   guild_id: setupguildid
   google_form_watch_channel_id: setupgoogleformchannelId
+  command:
+    permission_id: 1111111111111111111
 
 google:
   form:
