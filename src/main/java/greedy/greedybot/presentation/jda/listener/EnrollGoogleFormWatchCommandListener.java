@@ -39,17 +39,17 @@ public class EnrollGoogleFormWatchCommandListener implements SlashCommandListene
 
     @Override
     public void onAction(@NotNull final SlashCommandInteractionEvent event) {
-        OptionMapping optionalFormId = event.getOption(FORM_ID_KEY);
+        final OptionMapping optionalFormId = event.getOption(FORM_ID_KEY);
         if (Objects.isNull(optionalFormId)) {
             log.warn("EMPTY FORM ID");
             event.reply("Form id is required").queue();
             return;
         }
-        String formId = optionalFormId.getAsString();
+        final String formId = optionalFormId.getAsString();
         log.info("[RECEIVED ADD FORM ID]: {}", formId);
 
         event.deferReply().queue();
-        EnrollFormWatchResult result = googleFormService.enrollFormWatch(formId);
+        final EnrollFormWatchResult result = googleFormService.enrollFormWatch(formId);
         log.info("[ENROLL FORM WATCH]: {}", result);
         event.getHook().sendMessage("""
                         ✅ 구글폼 응답 구독이 등록 되었어요!

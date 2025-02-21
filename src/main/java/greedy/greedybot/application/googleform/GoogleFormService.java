@@ -36,7 +36,7 @@ public class GoogleFormService {
     }
 
     public String removeFormWatch(String formId) {
-        GoogleFormWatch googleFormWatch = googleFormWatchDiscordRepository.findByFormId(formId)
+        final GoogleFormWatch googleFormWatch = googleFormWatchDiscordRepository.findByFormId(formId)
                 .orElseThrow(() -> new GreedyBotException("해당 구글폼 감지기가 존재하지 않습니다"));
         googleFormWatchDiscordRepository.deleteByFormId(formId);
         return googleFormWatch.targetFormTitle();

@@ -31,6 +31,7 @@ public class GoogleFormApiClient {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                    log.warn("Google Form API 4xx error: {}", response.getBody());
                     throw new GreedyBotException("해당 구글폼에 접근 권한이 없습니다.");
                 }).onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
                     throw new GreedyBotException("구글폼 API에 오류가 발생했습니다. 잠시후 다시 시도해주세요.");

@@ -24,8 +24,7 @@ public class GoogleCredential {
                     .createScoped(Collections.singleton(FORMS_SCOPE));
 
             credentials.refreshIfExpired();
-            AccessToken token = credentials.getAccessToken();
-            return token.getTokenValue();
+            return credentials.getAccessToken().getTokenValue();
         } catch (IOException e) {
             throw new RuntimeException("Not Found Google credential file", e);
         }
