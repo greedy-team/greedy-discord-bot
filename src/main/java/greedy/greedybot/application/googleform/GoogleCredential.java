@@ -23,7 +23,6 @@ public class GoogleCredential {
                     .fromStream(new FileInputStream(SERVICE_ACCOUNT_PATH))
                     .createScoped(Collections.singleton(FORMS_SCOPE));
 
-            credentials.refreshIfExpired();
             return credentials.getAccessToken().getTokenValue();
         } catch (IOException e) {
             throw new RuntimeException("Not Found Google credential file", e);
