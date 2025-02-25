@@ -3,6 +3,8 @@ package greedy.greedybot.presentation.jda.listener;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -29,5 +31,16 @@ public class SlashCommandListenerMapper extends ListenerAdapter {
         final SlashCommandListener slashCommand = slashCommandListenersByCommandName.get(commandName);
         log.info("[RECEIVED DISCORD SLASH COMMAND] : {}", commandName);
         slashCommand.onAction(event);
+    }
+
+    @Override
+    public void onCommandAutoCompleteInteraction(@NotNull final CommandAutoCompleteInteractionEvent event) {
+        final String commandName = event.getName();
+
+        final SlashCommandListener slashCommand = slashCommandListenersByCommandName.get(commandName);
+        log.info("[RECEIVED DISCORD AUTOCOMPLETE COMMAND] : {}", commandName);
+        if (slashCommand instanceof AutoCompleteInteractionListener autoCompleteInteractionListener) {
+            autoCompleteInteractionListener.onCommandAutoCompleteInteraction(event);
+        }
     }
 }
