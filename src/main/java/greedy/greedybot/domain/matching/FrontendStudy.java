@@ -12,4 +12,9 @@ public class FrontendStudy implements Study {
     public String getGroupRoleId() {
         return this.groupRoleId;
     }
+
+    @Override
+    public String getStudyName() {
+        return "Frontend";
+    }
 }

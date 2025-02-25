@@ -12,4 +12,9 @@ public class BackendStudy implements Study {
     public String getGroupRoleId() {
         return this.groupRoleId;
     }
+
+    @Override
+    public String getStudyName() {
+        return "Backend";
+    }
 }
