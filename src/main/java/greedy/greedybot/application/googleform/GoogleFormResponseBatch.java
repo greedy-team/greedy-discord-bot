@@ -49,10 +49,10 @@ public class GoogleFormResponseBatch {
     }
 
     private void updateGoogleFormWatchResponseCount(final GoogleFormWatch googleFormWatch, final int responseCount) {
-        int previousResponseCount = googleFormWatch.responseCount();
-        GoogleFormWatch updateGoogleFormWatch = googleFormWatch.updateResponseCount(responseCount);
+        final int previousResponseCount = googleFormWatch.responseCount();
+        final GoogleFormWatch updateGoogleFormWatch = googleFormWatch.updateResponseCount(responseCount);
         googleFormWatchDiscordRepository.updateGoogleFormWatch(updateGoogleFormWatch);
-        int newResponseCount = responseCount - previousResponseCount;
+        final int newResponseCount = responseCount - previousResponseCount;
         jda.getTextChannelById(googleFormAlertChannelId).sendMessage("""
                 📩 %s에 %d개의 새로운 응답이 도착했어요! 총 응답 수: %d
                 """.formatted(updateGoogleFormWatch.targetFormTitle(), newResponseCount, responseCount)

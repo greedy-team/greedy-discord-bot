@@ -48,12 +48,12 @@ public class JdaConfiguration {
     }
 
     @Bean
-    Guild greedyGuild(JDA jda) {
+    Guild greedyGuild(final JDA jda) {
         return jda.getGuildById(guildId);
     }
 
     @Bean
-    TextChannel googleFormWatchChannel(JDA jda) {
+    TextChannel googleFormWatchChannel(final JDA jda) {
         return jda.getTextChannelById(channelId);
     }
 }

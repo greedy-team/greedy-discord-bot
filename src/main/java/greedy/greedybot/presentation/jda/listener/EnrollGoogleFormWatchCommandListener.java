@@ -25,6 +25,7 @@ public class EnrollGoogleFormWatchCommandListener implements SlashCommandListene
         this.googleFormService = googleFormService;
     }
 
+    @Override
     public String getCommandName() {
         return "form-add";
     }
