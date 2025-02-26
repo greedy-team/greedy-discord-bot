@@ -1,6 +1,7 @@
 package greedy.greedybot.presentation.jda.listener;
 
-import greedy.greedybot.domain.matching.*;
+import greedy.greedybot.application.matching.MatchingService;
+import greedy.greedybot.application.matching.dto.MatchingResultAnnouncement;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -99,11 +100,11 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
         final List<String> reviewers = extractNamesFromRawString(reviewersRawString);
 
 
-        String matchingResult = matchingService.matchStudy(reviewees, reviewers);
+        MatchingResultAnnouncement matchingResultAnnouncement = matchingService.matchStudy(reviewees, reviewers);
 
         log.info("MATCH SUCCESS");
 
-        String message = "[**" + mission + "** 리뷰어 매칭 결과]\n\n" + matchingResult;
+        String message = "[**" + mission + "** 리뷰어 매칭 결과]\n\n" + matchingResultAnnouncement.announcement();
         event.getHook().sendMessage(message).queue();
     }
 

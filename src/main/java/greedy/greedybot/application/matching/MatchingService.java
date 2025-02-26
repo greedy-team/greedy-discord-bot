@@ -1,5 +1,6 @@
-package greedy.greedybot.domain.matching;
+package greedy.greedybot.application.matching;
 
+import greedy.greedybot.application.matching.dto.MatchingResultAnnouncement;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -11,7 +12,7 @@ import java.util.Map;
 @Service
 public class MatchingService {
 
-    public String matchStudy(final List<String> reviewees, final List<String> reviewers) {
+    public MatchingResultAnnouncement matchStudy(final List<String> reviewees, final List<String> reviewers) {
         MatchingResult matchingResult;
 
         Collections.shuffle(reviewees);
@@ -19,11 +20,11 @@ public class MatchingService {
 
         if (reviewees.size() >= reviewers.size()) {
             matchingResult = matchMoreReviewees(reviewees, reviewers);
-            return matchingResult.toDiscordNotification();
+            return MatchingResultAnnouncement.of(matchingResult);
         }
 
         matchingResult = matchFewerReviewees(reviewees, reviewers);
-        return matchingResult.toDiscordNotification();
+        return MatchingResultAnnouncement.of(matchingResult);
     }
 
     private MatchingResult matchFewerReviewees(final List<String> reviewees, final List<String> reviewers) {
