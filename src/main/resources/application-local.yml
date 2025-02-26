@@ -1,3 +1,29 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;MODE=MySQL
+    username: sa
+    password:
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        highlight_sql: true
+
+    hibernate:
+      ddl-auto: create
+
 discord:
   token: setupbottoken
   guild_id: setupguildid
+  google_form_watch_channel_id: setupgoogleformchannelId
+  command:
+    permission_id: 1111111111111111111
+
+google:
+  form:
+    credentials_path: credentialpath
+    scope: googleformscope
