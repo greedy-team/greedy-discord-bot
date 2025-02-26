@@ -12,11 +12,16 @@ import java.util.Map;
 @Service
 public class MatchingService {
 
+    private final ShuffleStrategy shuffleStrategy;
+
+    public MatchingService(ShuffleStrategy shuffleStrategy) {
+        this.shuffleStrategy = shuffleStrategy;
+    }
+
     public MatchingResultAnnouncement matchStudy(final List<String> reviewees, final List<String> reviewers) {
         MatchingResult matchingResult;
 
-        Collections.shuffle(reviewees);
-        Collections.shuffle(reviewers);
+        shuffleStrategy.shuffle(reviewers);
 
         if (reviewees.size() >= reviewers.size()) {
             matchingResult = matchMoreReviewees(reviewees, reviewers);
