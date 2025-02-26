@@ -3,7 +3,6 @@ package greedy.greedybot.application.matching;
 import greedy.greedybot.application.matching.dto.MatchingResultAnnouncement;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
