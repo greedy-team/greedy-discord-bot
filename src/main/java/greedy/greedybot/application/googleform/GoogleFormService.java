@@ -23,7 +23,7 @@ public class GoogleFormService {
     }
 
     // TODO: test
-    public EnrollFormWatchResult enrollFormWatch(String formId) {
+    public EnrollFormWatchResult enrollFormWatch(final String formId) {
         googleFormWatchDiscordRepository.findByFormId(formId).ifPresent(googleFormWatch -> {
             throw new GreedyBotException("이미 등록된 구글폼 감지기입니다");
         });
@@ -35,7 +35,7 @@ public class GoogleFormService {
         return new EnrollFormWatchResult(formInformationResponse.title(), responseCount);
     }
 
-    public String removeFormWatch(String formId) {
+    public String removeFormWatch(final String formId) {
         final GoogleFormWatch googleFormWatch = googleFormWatchDiscordRepository.findByFormId(formId)
                 .orElseThrow(() -> new GreedyBotException("해당 구글폼 감지기가 존재하지 않습니다"));
         googleFormWatchDiscordRepository.deleteByFormId(formId);

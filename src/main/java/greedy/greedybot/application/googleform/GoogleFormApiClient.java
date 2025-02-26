@@ -25,7 +25,7 @@ public class GoogleFormApiClient {
     }
 
     // ref: https://developers.google.com/forms/api/reference/rest/v1/forms/get
-    public GoogleFormInformationResponse readForm(String formId, String accessToken) {
+    public GoogleFormInformationResponse readForm(final String formId, final String accessToken) {
         return restClient.get()
                 .uri(GET_FORM_ENDPOINT, formId)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
@@ -40,7 +40,7 @@ public class GoogleFormApiClient {
     }
 
     // ref: https://developers.google.com/forms/api/reference/rest/v1/forms.responses/list
-    public int readFormResponseCount(String formId, String accessToken) {
+    public int readFormResponseCount(final String formId, final String accessToken) {
         return restClient.get()
                 .uri(LIST_RESPONSE_ENDPOINT, formId)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)

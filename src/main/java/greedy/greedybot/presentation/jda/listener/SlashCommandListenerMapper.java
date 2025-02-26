@@ -39,7 +39,7 @@ public class SlashCommandListenerMapper extends ListenerAdapter {
         run(event);
     }
 
-    private void run(final @NotNull SlashCommandInteractionEvent event) {
+    private void run(@NotNull final SlashCommandInteractionEvent event) {
         final String commandName = event.getName();
         final SlashCommandListener slashCommand = slashCommandListenersByCommandName.get(commandName);
         log.info("[RECEIVED DISCORD SLASH COMMAND] : {}", commandName);
