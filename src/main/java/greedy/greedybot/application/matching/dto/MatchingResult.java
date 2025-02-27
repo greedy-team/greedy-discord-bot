@@ -10,10 +10,6 @@ public class MatchingResult {
         this.result = result;
     }
 
-    public Map<String, List<String>> getResult() {
-        return result;
-    }
-
     public String toDiscordAnnouncement() {
         final StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("[리뷰이]  --  [리뷰어]\n");
