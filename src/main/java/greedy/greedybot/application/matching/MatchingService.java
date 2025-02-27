@@ -22,39 +22,51 @@ public class MatchingService {
         shuffleStrategy.shuffle(reviewers);
 
         if (reviewees.size() >= reviewers.size()) {
-            return matchMoreReviewees(reviewees, reviewers);
+            return matchWhenRevieweesAreMore(reviewees, reviewers);
         }
 
-        return matchFewerReviewees(reviewees, reviewers);
+        return matchWhenRevieweesAreFewer(reviewees, reviewers);
     }
 
-    private MatchingResult matchFewerReviewees(final List<String> reviewees, final List<String> reviewers) {
+    // 리뷰이가 리뷰어보다 적을때 랜덤 매칭
+    // 리뷰이 사람 수 만큼 리뷰어를 랜덤 선택하여 매칭 결과 생성
+    private MatchingResult matchWhenRevieweesAreFewer(final List<String> reviewees, final List<String> randomReviewers) {
+        // { 리뷰어1 : [리뷰이1] } 형태로 매칭 결과 표현
         final Map<String, List<String>> matchingResult = new HashMap<>();
 
         int index = 0;
         for (final String reviewee : reviewees) {
-            final List<String> assignedReviewee = List.of(reviewee);
-            matchingResult.put(reviewers.get(index++), assignedReviewee);
+            // 리뷰어에게 할당되는 리뷰이
+            final List<String> singleAssignedReviewee = List.of(reviewee);
+
+            matchingResult.put(randomReviewers.get(index++), singleAssignedReviewee);
         }
 
         return new MatchingResult(matchingResult);
     }
 
-
-    private MatchingResult matchMoreReviewees(final List<String> reviewees, final List<String> reviewers) {
+    // 리뷰이가 리뷰어보다 많을때 랜덤 매칭
+    // 리뷰어가 같은 숫자로 리뷰이를 나눠 가진 다음 남은 리뷰이를 랜덤으로 한명씩 갖는 함수
+    private MatchingResult matchWhenRevieweesAreMore(final List<String> reviewees, final List<String> randomReviewers) {
+        // { 리뷰어1: [리뷰이1, 리뷰이2] } 형태로 매칭 결과 표현
         final Map<String, List<String>> matchingResult = new HashMap<>();
-        final int revieweeSize = reviewees.size();
-        final int reviewerSize = reviewers.size();
 
+        final int revieweeSize = reviewees.size();
+        final int reviewerSize = randomReviewers.size();
+
+        // 공평하게 나눠 가질 리뷰이 숫자를 나타내는 변수
         final int baseCount = revieweeSize / reviewerSize;
+        // 공평하게 나눠 갖고 남은 리뷰이 숫자를 나타내는 변수
         int remainderCount = revieweeSize % reviewerSize;
 
         int index = 0;
 
-        for (final String reviewer : reviewers) {
+        for (final String reviewer : randomReviewers) {
+            // 리뷰어에게 몇명의 리뷰이를 할당할지 나타내는 변수
             final int assignCount = getAssignCount(baseCount, remainderCount);
             remainderCount--;
 
+            // 리뷰어에게 할당되는 리뷰이들을 나타내는 변수
             final List<String> assignedReviewees = reviewees.subList(index, index + assignCount);
             index += assignCount;
 
@@ -63,6 +75,7 @@ public class MatchingService {
         return new MatchingResult(matchingResult);
     }
 
+    // 남은 리뷰이 숫자가 존재한다면 리뷰어에게 한명의 리뷰이를 더 배정하는 함수
     private int getAssignCount(final int baseCount, final int remainderCount) {
         if (remainderCount > 0) {
             return baseCount + 1;
