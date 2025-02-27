@@ -18,17 +18,14 @@ public class MatchingService {
     }
 
     public MatchingResult matchStudy(final List<String> reviewees, final List<String> reviewers) {
-        MatchingResult matchingResult;
 
         shuffleStrategy.shuffle(reviewers);
 
         if (reviewees.size() >= reviewers.size()) {
-            matchingResult = matchMoreReviewees(reviewees, reviewers);
-            return matchingResult;
+            return matchMoreReviewees(reviewees, reviewers);
         }
 
-        matchingResult = matchFewerReviewees(reviewees, reviewers);
-        return matchingResult;
+        return matchFewerReviewees(reviewees, reviewers);
     }
 
     private MatchingResult matchFewerReviewees(final List<String> reviewees, final List<String> reviewers) {
