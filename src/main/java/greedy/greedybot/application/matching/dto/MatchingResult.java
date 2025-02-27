@@ -10,19 +10,22 @@ public class MatchingResult {
         this.result = result;
     }
 
+    public Map<String, List<String>> getResult() {
+        return result;
+    }
+
     public String toDiscordAnnouncement() {
         final StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("[리뷰이]  --  [리뷰어]\n");
 
-        for (Map.Entry<String, List<String>> entry : result.entrySet()) {
-            String reviewer = entry.getKey();
-            for (String reviewee : entry.getValue()) {
-                stringBuilder.append(reviewee)
-                        .append("    ->   ")
-                        .append(reviewer)
-                        .append("\n");
-            }
+        for (final String reviewer : result.keySet()) {
+            final List<String> reviewees = result.get(reviewer);
+            reviewees.forEach(reviewee -> stringBuilder.append(reviewee)
+                    .append("    ->   ")
+                    .append(reviewer)
+                    .append("\n"));
         }
+
         return stringBuilder.toString();
     }
 }
