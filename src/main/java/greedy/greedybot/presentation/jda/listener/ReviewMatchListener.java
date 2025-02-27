@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component
 public class ReviewMatchListener implements AutoCompleteInteractionListener {
@@ -69,8 +68,8 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
         final String revieweesRawString = optionReviewees.getAsString();
         final String reviewersRawString = optionReviewers.getAsString();
 
-        final String revieweeType = revieweesRawString.substring(0, 4);
-        final String reviewerType = reviewersRawString.substring(0, 4);
+        final String revieweeType = getStudyType(revieweesRawString);
+        final String reviewerType = getStudyType(reviewersRawString);
 
         validateReviewerAndRevieweeType(revieweeType, reviewerType);
 
@@ -121,9 +120,11 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
     }
 
     private List<String> extractNamesFromRawString(String rawString) {
-        return Arrays.stream(rawString.substring(7)
-                        .replace(" ", "")
+        return Arrays.stream(rawString
+                        .split(":")[1]
+                        .trim()
                         .split(","))
+                .map(String::trim)
                 .collect(Collectors.toList());
     }
 
@@ -149,5 +150,9 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
             log.warn("[REVIEWER AND REVIEWEE STUDY TYPE DISMATCH]");
             throw new GreedyBotException("\uD83D\uDEAB 리뷰어 리뷰이 스터디 타입 정보가 일치 하지 않습니다.");
         }
+    }
+
+    private String getStudyType(final String groupInfo) {
+        return groupInfo.split(":")[0];
     }
 }
