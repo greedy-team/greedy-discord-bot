@@ -2,6 +2,7 @@ package greedy.greedybot.presentation.jda.listener;
 
 import greedy.greedybot.application.matching.MatchingService;
 import greedy.greedybot.application.matching.dto.MatchingResult;
+import greedy.greedybot.common.exception.GreedyBotException;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -62,23 +63,7 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
         final OptionMapping optionReviewees = event.getOption("reviewee");
         final OptionMapping optionReviewers = event.getOption("reviewer");
 
-        if (Objects.isNull(optionMission)) {
-            log.warn("EMPTY MISSION");
-            event.reply("EMPTY MISSION").queue();
-            return;
-        }
-
-        if (Objects.isNull(optionReviewees)) {
-            log.warn("EMPTY REVIEWEES");
-            event.reply("EMPTY REVIEWEE").queue();
-            return;
-        }
-
-        if (Objects.isNull(optionReviewers)) {
-            log.warn("EMPTY REVIEWERS");
-            event.reply("EMPTY REVIEWERS").queue();
-            return;
-        }
+        validateOptions(optionMission, optionReviewees, optionReviewers);
 
         final String mission = optionMission.getAsString();
         final String revieweesRawString = optionReviewees.getAsString();
@@ -87,11 +72,7 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
         final String revieweeType = revieweesRawString.substring(0, 4);
         final String reviewerType = reviewersRawString.substring(0, 4);
 
-        if (!revieweeType.equals(reviewerType)) {
-            log.warn("MATCH TYPE DISMATCH");
-            event.reply("MATCH TYPE DISMATCH").queue();
-            return;
-        }
+        validateReviewerAndRevieweeType(revieweeType, reviewerType);
 
         event.deferReply().queue();
         log.info("SUCCESS TO GET EVENT");
@@ -144,5 +125,29 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
                         .replace(" ", "")
                         .split(","))
                 .collect(Collectors.toList());
+    }
+
+    private void validateOptions(final OptionMapping optionMission, final OptionMapping optionReviewees, final OptionMapping optionReviewers) {
+        if (Objects.isNull(optionMission)) {
+            log.warn("[EMPTY MISSION]");
+            throw new GreedyBotException("\uD83D\uDEAB 미션 정보가 입력 되지 않았습니다.");
+        }
+
+        if (Objects.isNull(optionReviewees)) {
+            log.warn("[EMPTY REVIEWEES]");
+            throw new GreedyBotException("\uD83D\uDEAB 리뷰이 정보가 입력 되지 않았습니다.");
+        }
+
+        if (Objects.isNull(optionReviewers)) {
+            log.warn("[EMPTY REVIEWERS]");
+            throw new GreedyBotException("\uD83D\uDEAB 리뷰어 정보가 입력 되지 않았습니다.");
+        }
+    }
+
+    private void validateReviewerAndRevieweeType(final String revieweeType, final String reviewerType) {
+        if (!revieweeType.equals(reviewerType)) {
+            log.warn("[REVIEWER AND REVIEWEE STUDY TYPE DISMATCH]");
+            throw new GreedyBotException("\uD83D\uDEAB 리뷰어 리뷰이 스터디 타입 정보가 일치 하지 않습니다.");
+        }
     }
 }
