@@ -25,14 +25,14 @@ import java.util.stream.Stream;
 public class ReviewMatchListener implements AutoCompleteInteractionListener {
 
     private static final Logger log = LoggerFactory.getLogger(ReviewMatchListener.class);
-    private static final String[] reviewees = new String[]{
+    private static final List<String> reviewees = List.of(
             "BE-1기: 남해윤, 안금서, 신지훈, 정상희, 신혜빈, 김의진, 황승준",
-            "FE-1기: 송혜정, 김준수",
-    };
-    private static final String[] reviewers = new String[]{
+            "FE-1기: 송혜정, 김준수"
+    );
+    private static final List<String> reviewers =  List.of(
             "BE-1기: 원태연, 이승용, 송은우, 백경환, 김주환, 조승현",
-            "FE-1기: 김범수, 김의천",
-    };
+            "FE-1기: 김범수, 김의천"
+    );
 
 
     private final MatchingService matchingService;
@@ -75,7 +75,7 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
         validateReviewerAndRevieweeType(revieweeType, reviewerType);
 
         event.deferReply().queue();
-        log.info("SUCCESS TO GET EVENT");
+        log.info("[SUCCESS TO GET EVENT]");
 
         final List<String> reviewees = extractNamesFromRawString(revieweesRawString);
         final List<String> reviewers = extractNamesFromRawString(reviewersRawString);
@@ -83,7 +83,7 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
 
         MatchingResult matchingResultAnnouncement = matchingService.matchStudy(reviewees, reviewers);
 
-        log.info("MATCH SUCCESS");
+        log.info("[MATCH SUCCESS]");
 
         String message = "[**" + mission + "** 리뷰어 매칭 결과]\n\n" + matchingResultAnnouncement.toDiscordAnnouncement();
         event.getHook().sendMessage(message).queue();
@@ -94,30 +94,30 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
         if (isRevieweeAutoCompleteEvent(event)) {
             List<Command.Choice> options = setOptions(reviewees, event);
             event.replyChoices(options).queue();
-            log.info("SUCCESS TO GET REVIEWEE OPTIONS");
+            log.info("[SUCCESS TO GET REVIEWEE OPTIONS]");
         }
 
         if (isReviewerAutoCompleteEvent(event)) {
             List<Command.Choice> options = setOptions(reviewers, event);
             event.replyChoices(options).queue();
-            log.info("SUCCESS TO GET REVIEWER OPTIONS");
+            log.info("[SUCCESS TO GET REVIEWER OPTIONS]");
         }
     }
 
-    private List<Command.Choice> setOptions(final String[] greedyMembers, final CommandAutoCompleteInteractionEvent event) {
-        return Stream.of(greedyMembers)
-                .filter(word -> word.startsWith(event.getFocusedOption().getValue())) // 사용자의 입력과 일치하는 단어만 표시
-                .map(word -> new Command.Choice(word, word)) // 단어를 선택지로 변환
+    private List<Command.Choice> setOptions(final List<String> greedyMembers, final CommandAutoCompleteInteractionEvent event) {
+        return greedyMembers.stream()
+                .filter(member -> member.startsWith(event.getFocusedOption().getValue()))
+                .map(member -> new Command.Choice(member, member))
                 .collect(Collectors.toList());
     }
 
     private boolean isRevieweeAutoCompleteEvent(final CommandAutoCompleteInteractionEvent event) {
-        return event.getName().equals("review") && event.getFocusedOption().getName().equals("reviewee");
+        return event.getName().equals("review-match") && event.getFocusedOption().getName().equals("reviewee");
 
     }
 
     private boolean isReviewerAutoCompleteEvent(final CommandAutoCompleteInteractionEvent event) {
-        return event.getName().equals("review") && event.getFocusedOption().getName().equals("reviewer");
+        return event.getName().equals("review-match") && event.getFocusedOption().getName().equals("reviewer");
     }
 
     private List<String> extractNamesFromRawString(String rawString) {
