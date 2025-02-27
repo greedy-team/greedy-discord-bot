@@ -45,7 +45,7 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
 
     @Override
     public String getCommandName() {
-        return "review";
+        return "review-match";
     }
 
     @Override
