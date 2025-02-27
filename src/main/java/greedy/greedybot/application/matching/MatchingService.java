@@ -1,6 +1,6 @@
 package greedy.greedybot.application.matching;
 
-import greedy.greedybot.application.matching.dto.MatchingResultAnnouncement;
+import greedy.greedybot.application.matching.dto.MatchingResult;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -17,18 +17,18 @@ public class MatchingService {
         this.shuffleStrategy = shuffleStrategy;
     }
 
-    public MatchingResultAnnouncement matchStudy(final List<String> reviewees, final List<String> reviewers) {
+    public MatchingResult matchStudy(final List<String> reviewees, final List<String> reviewers) {
         MatchingResult matchingResult;
 
         shuffleStrategy.shuffle(reviewers);
 
         if (reviewees.size() >= reviewers.size()) {
             matchingResult = matchMoreReviewees(reviewees, reviewers);
-            return MatchingResultAnnouncement.of(matchingResult);
+            return matchingResult;
         }
 
         matchingResult = matchFewerReviewees(reviewees, reviewers);
-        return MatchingResultAnnouncement.of(matchingResult);
+        return matchingResult;
     }
 
     private MatchingResult matchFewerReviewees(final List<String> reviewees, final List<String> reviewers) {

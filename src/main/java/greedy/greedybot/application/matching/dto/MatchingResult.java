@@ -1,18 +1,20 @@
 package greedy.greedybot.application.matching.dto;
 
-import greedy.greedybot.application.matching.MatchingResult;
-
 import java.util.List;
 import java.util.Map;
 
-public record MatchingResultAnnouncement(
-        String announcement
-) {
-    public static MatchingResultAnnouncement of(final MatchingResult matchingResult) {
+public class MatchingResult {
+    private final Map<String, List<String>> result;
+
+    public MatchingResult(Map<String, List<String>> result) {
+        this.result = result;
+    }
+
+    public String toDiscordAnnouncement() {
         final StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("[리뷰이]  --  [리뷰어]\n");
 
-        for (Map.Entry<String, List<String>> entry : matchingResult.getResult().entrySet()) {
+        for (Map.Entry<String, List<String>> entry : result.entrySet()) {
             String reviewer = entry.getKey();
             for (String reviewee : entry.getValue()) {
                 stringBuilder.append(reviewee)
@@ -21,6 +23,6 @@ public record MatchingResultAnnouncement(
                         .append("\n");
             }
         }
-        return new MatchingResultAnnouncement(stringBuilder.toString());
+        return stringBuilder.toString();
     }
 }

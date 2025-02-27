@@ -1,6 +1,6 @@
 package greedy.greedybot.application.matching;
 
-import greedy.greedybot.application.matching.dto.MatchingResultAnnouncement;
+import greedy.greedybot.application.matching.dto.MatchingResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,14 +25,14 @@ public class MatchingServiceTest {
         final List<String> reviewers = List.of("리뷰어1", "리뷰어2");
 
         //when
-        final MatchingResultAnnouncement matchingResultAnnouncement = matchingService.matchStudy(reviewees, reviewers);
+        final MatchingResult matchingResult = matchingService.matchStudy(reviewees, reviewers);
 
         //then
-
-        assertThat(matchingResultAnnouncement.announcement()).contains("리뷰이1    ->   리뷰어1");
-        assertThat(matchingResultAnnouncement.announcement()).contains("리뷰이2    ->   리뷰어1");
-        assertThat(matchingResultAnnouncement.announcement()).contains("리뷰이3    ->   리뷰어2");
-        assertThat(matchingResultAnnouncement.announcement()).contains("리뷰이4    ->   리뷰어2");
+        final String announcement = matchingResult.toDiscordAnnouncement();
+        assertThat(announcement).contains("리뷰이1    ->   리뷰어1");
+        assertThat(announcement).contains("리뷰이2    ->   리뷰어1");
+        assertThat(announcement).contains("리뷰이3    ->   리뷰어2");
+        assertThat(announcement).contains("리뷰이4    ->   리뷰어2");
     }
 
     @Test
@@ -43,10 +43,11 @@ public class MatchingServiceTest {
         final List<String> reviewers = List.of("리뷰어1", "리뷰어2", "리뷰어3", "리뷰어4");
 
         //when
-        final MatchingResultAnnouncement matchingResultAnnouncement = matchingService.matchStudy(reviewees, reviewers);
+        final MatchingResult matchingResult = matchingService.matchStudy(reviewees, reviewers);
 
         //then
-        assertThat(matchingResultAnnouncement.announcement()).contains("리뷰이1    ->   리뷰어1");
-        assertThat(matchingResultAnnouncement.announcement()).contains("리뷰이2    ->   리뷰어2");
+        final String announcement = matchingResult.toDiscordAnnouncement();
+        assertThat(announcement).contains("리뷰이1    ->   리뷰어1");
+        assertThat(announcement).contains("리뷰이2    ->   리뷰어2");
     }
 }

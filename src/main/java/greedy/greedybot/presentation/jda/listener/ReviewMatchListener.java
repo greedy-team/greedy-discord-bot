@@ -1,7 +1,7 @@
 package greedy.greedybot.presentation.jda.listener;
 
 import greedy.greedybot.application.matching.MatchingService;
-import greedy.greedybot.application.matching.dto.MatchingResultAnnouncement;
+import greedy.greedybot.application.matching.dto.MatchingResult;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -100,11 +100,11 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
         final List<String> reviewers = extractNamesFromRawString(reviewersRawString);
 
 
-        MatchingResultAnnouncement matchingResultAnnouncement = matchingService.matchStudy(reviewees, reviewers);
+        MatchingResult matchingResultAnnouncement = matchingService.matchStudy(reviewees, reviewers);
 
         log.info("MATCH SUCCESS");
 
-        String message = "[**" + mission + "** 리뷰어 매칭 결과]\n\n" + matchingResultAnnouncement.announcement();
+        String message = "[**" + mission + "** 리뷰어 매칭 결과]\n\n" + matchingResultAnnouncement.toDiscordAnnouncement();
         event.getHook().sendMessage(message).queue();
     }
 
