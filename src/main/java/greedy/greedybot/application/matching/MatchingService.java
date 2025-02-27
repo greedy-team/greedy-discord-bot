@@ -35,7 +35,7 @@ public class MatchingService {
         final Map<String, List<String>> matchingResult = new HashMap<>();
 
         int index = 0;
-        for (String reviewee : reviewees) {
+        for (final String reviewee : reviewees) {
             final List<String> assignedReviewee = List.of(reviewee);
             matchingResult.put(reviewers.get(index++), assignedReviewee);
         }
@@ -54,7 +54,7 @@ public class MatchingService {
 
         int index = 0;
 
-        for (String reviewer : reviewers) {
+        for (final String reviewer : reviewers) {
             final int assignCount = getAssignCount(baseCount, remainderCount);
             remainderCount--;
 
