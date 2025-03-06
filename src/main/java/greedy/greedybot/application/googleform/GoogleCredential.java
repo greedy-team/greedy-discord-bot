@@ -1,6 +1,5 @@
 package greedy.greedybot.application.googleform;
 
-import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
 import java.io.FileInputStream;
 import java.io.IOException;

@@ -8,29 +8,29 @@ import org.springframework.stereotype.Component;
 @Component
 public class GoogleFormWatchMapper {
 
-    public String toTextEntity(GoogleFormWatch googleFormWatch) {
+    public String toTextEntity(final GoogleFormWatch googleFormWatch) {
         return Arrays.stream(googleFormWatch.getClass().getRecordComponents())
                 .map(component -> formatField(googleFormWatch, component))
                 .collect(Collectors.joining(","));
     }
 
-    private String formatField(Record record, RecordComponent component) {
+    private String formatField(final Record record, final RecordComponent component) {
         try {
-            Object value = component.getAccessor().invoke(record);
+            final Object value = component.getAccessor().invoke(record);
             return component.getName() + ":" + value;
         } catch (Exception e) {
             throw new RuntimeException("Failed to convert record to string", e);
         }
     }
 
-    public GoogleFormWatch toEntity(String text) {
-        String targetFormId = findValueByKey(text, "targetFormId");
-        String targetFormTitle = findValueByKey(text, "targetFormTitle");
-        int responseCount = Integer.parseInt(findValueByKey(text, "responseCount"));
+    public GoogleFormWatch toEntity(final String text) {
+        final String targetFormId = findValueByKey(text, "targetFormId");
+        final String targetFormTitle = findValueByKey(text, "targetFormTitle");
+        final int responseCount = Integer.parseInt(findValueByKey(text, "responseCount"));
         return new GoogleFormWatch(targetFormId, targetFormTitle, responseCount);
     }
 
-    private String findValueByKey(String text, String key) {
+    private String findValueByKey(final String text, final String key) {
         return Arrays.stream(text.split(","))
                 .filter(field -> field.contains(key))
                 .map(field -> field.split(":")[1])
