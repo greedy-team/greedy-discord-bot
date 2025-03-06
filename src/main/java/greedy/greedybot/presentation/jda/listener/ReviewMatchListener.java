@@ -25,12 +25,12 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
 
     private static final Logger log = LoggerFactory.getLogger(ReviewMatchListener.class);
     private static final List<String> reviewees = List.of(
-            "BE-1기: 남해윤, 안금서, 신지훈, 정상희, 신혜빈, 김의진, 황승준",
-            "FE-1기: 송혜정, 김준수"
+            "BE-2기: 김지우, 이창희, 황혜림, 전서희, 허석준",
+            "FE-2기: 강동현, 신지훈, 신지우, 박찬빈, 임규영, 정창우"
     );
     private static final List<String> reviewers =  List.of(
-            "BE-1기: 원태연, 이승용, 송은우, 백경환, 김주환, 조승현",
-            "FE-1기: 김범수, 김의천"
+            "BE-2기: 원태연, 백경환, 송은우, 조승현, 정다빈",
+            "FE-2기: 김범수, 김의천, 송혜정, 김민석"
     );
 
 
