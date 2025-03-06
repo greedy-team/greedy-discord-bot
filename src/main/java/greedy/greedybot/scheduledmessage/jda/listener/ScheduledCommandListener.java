@@ -1,10 +1,10 @@
-package greedy.greedybot.scheduledMessage.jda.listener;
+package greedy.greedybot.scheduledmessage.jda.listener;
 
 import greedy.greedybot.presentation.jda.listener.SlashCommandListener;
 import greedy.greedybot.presentation.jda.listener.StatusCommandListener;
-import greedy.greedybot.scheduledMessage.GreedyBotException;
-import greedy.greedybot.scheduledMessage.domain.ScheduledMessage;
-import greedy.greedybot.scheduledMessage.domain.ScheduledMessageService;
+import greedy.greedybot.scheduledmessage.GreedyBotException;
+import greedy.greedybot.scheduledmessage.domain.ScheduledMessage;
+import greedy.greedybot.scheduledmessage.domain.ScheduledMessageService;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -23,7 +23,7 @@ import java.util.Locale;
 public class ScheduledCommandListener implements SlashCommandListener {
 
     private final ScheduledMessageService scheduledMessageService;
-    private final Logger log = LoggerFactory.getLogger(StatusCommandListener.class);
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss", Locale.ENGLISH);
 
@@ -33,7 +33,7 @@ public class ScheduledCommandListener implements SlashCommandListener {
 
     @Override
     public String getCommandName() {
-        return "scheduled";
+        return "add-scheduled-message";
     }
 
     @Override

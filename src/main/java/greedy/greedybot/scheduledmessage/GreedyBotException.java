@@ -1,4 +1,4 @@
-package greedy.greedybot.scheduledMessage;
+package greedy.greedybot.scheduledmessage;
 
 public class GreedyBotException extends RuntimeException {
     public GreedyBotException(String message) {

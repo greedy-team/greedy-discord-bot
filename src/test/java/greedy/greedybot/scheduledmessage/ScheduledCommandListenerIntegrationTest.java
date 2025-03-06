@@ -1,9 +1,9 @@
-package greedy.greedybot.scheduledMessage;
+package greedy.greedybot.scheduledmessage;
 
-import greedy.greedybot.scheduledMessage.domain.ScheduledMessage;
-import greedy.greedybot.scheduledMessage.domain.ScheduledMessageRepository;
-import greedy.greedybot.scheduledMessage.domain.ScheduledMessageService;
-import greedy.greedybot.scheduledMessage.jda.listener.ScheduledCommandListener;
+import greedy.greedybot.scheduledmessage.domain.ScheduledMessage;
+import greedy.greedybot.scheduledmessage.domain.ScheduledMessageRepository;
+import greedy.greedybot.scheduledmessage.domain.ScheduledMessageService;
+import greedy.greedybot.scheduledmessage.jda.listener.ScheduledCommandListener;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.junit.jupiter.api.Test;
