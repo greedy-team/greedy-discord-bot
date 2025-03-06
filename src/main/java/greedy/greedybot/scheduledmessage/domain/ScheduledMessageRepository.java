@@ -1,8 +1,7 @@
-package greedy.greedybot.scheduledMessage.domain;
+package greedy.greedybot.scheduledmessage.domain;
 
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
