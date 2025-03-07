@@ -33,7 +33,7 @@ public class GoogleFormResponseBatch {
         this.jda = jda;
     }
 
-    @Scheduled(fixedDelay = 5 * 60 * 1000) // 5분마다 실행
+    @Scheduled(initialDelay = 60 * 1000, fixedDelay = 1000 * 60 * 5) // 5분마다 실행
     public void fetchGoogleFormWatchResponses() {
         final String accessToken = googleCredential.getAccessToken();
         final List<GoogleFormWatch> googleFormWatches = googleFormWatchDiscordRepository.findAll();

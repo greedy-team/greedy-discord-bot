@@ -2,9 +2,14 @@ spring:
   application:
     name: greedy-bot
 
-  main:
-    web-application-type: none
-
   profiles:
     active: discord
 
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+
+  main:
+    web-application-type: none
+
+server:
+  shutdown: graceful
