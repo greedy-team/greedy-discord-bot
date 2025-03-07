@@ -4,7 +4,6 @@ import greedy.greedybot.common.exception.GreedyBotException;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
