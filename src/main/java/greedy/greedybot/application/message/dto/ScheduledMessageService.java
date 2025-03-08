@@ -1,11 +1,8 @@
-package greedy.greedybot.scheduledmessage.domain;
+package greedy.greedybot.application.message.dto;
 
-import greedy.greedybot.scheduledmessage.jda.listener.ScheduledMessageScheduler;
+import greedy.greedybot.presentation.jda.listener.ScheduledMessageScheduler;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class ScheduledMessageService {

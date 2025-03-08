@@ -1,7 +1,6 @@
-package greedy.greedybot.scheduledmessage.jda.listener;
+package greedy.greedybot.presentation.jda.listener;
 
-import greedy.greedybot.presentation.jda.listener.StatusCommandListener;
-import greedy.greedybot.scheduledmessage.domain.ScheduledMessage;
+import greedy.greedybot.application.message.dto.ScheduledMessage;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.slf4j.Logger;

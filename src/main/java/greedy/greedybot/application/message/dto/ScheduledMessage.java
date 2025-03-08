@@ -1,4 +1,4 @@
-package greedy.greedybot.scheduledmessage.domain;
+package greedy.greedybot.application.message.dto;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

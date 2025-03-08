@@ -1,4 +1,4 @@
-package greedy.greedybot.scheduledmessage.domain;
+package greedy.greedybot.application.message.dto;
 
 import org.springframework.stereotype.Repository;
 
