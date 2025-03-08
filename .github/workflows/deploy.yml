@@ -9,7 +9,7 @@ on:
     branches: [ main ]
 
 jobs:
-  ci-cd:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -34,7 +34,8 @@ jobs:
         run: |
           pwd
           cd ./src/main/resources
-          mkdir -p ${{ secrets.GOOGLE_CREDENTIAL_PATH }} && cd ${{ secrets.GOOGLE_CREDENTIAL_PATH }}
+          mkdir -p ${{ secrets.GOOGLE_CREDENTIAL_PATH }} 
+          cd ${{ secrets.GOOGLE_CREDENTIAL_PATH }}
           touch ./${{ secrets.GOOGLE_CREDENTIAL_FILE }}
           echo "${{ secrets.GOOGLE_CREDENTIAL }}" > ./${{ secrets.GOOGLE_CREDENTIAL_FILE }}
         working-directory: ${{ env.working-directory }}
