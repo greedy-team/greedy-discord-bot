@@ -27,7 +27,7 @@ jobs:
           pwd
           cd ./src/main/resources
           touch ./${{ secrets.APPLICATION_PROFILE_FILE }}
-          echo "${{ secrets.APPLICATION_PROFILE }}" | base64 --decode > ./${{ secrets.APPLICATION_PROFILE_FILE }}
+          echo "${{ secrets.APPLICATION_PROFILE }}" > ./${{ secrets.APPLICATION_PROFILE_FILE }}
         working-directory: ${{ env.working-directory }}
 
       - name: Apply google credentials
@@ -37,7 +37,7 @@ jobs:
           mkdir -p ${{ secrets.GOOGLE_CREDENTIAL_PATH }} 
           cd ${{ secrets.GOOGLE_CREDENTIAL_PATH }}
           touch ./${{ secrets.GOOGLE_CREDENTIAL_FILE }}
-          echo "${{ secrets.GOOGLE_CREDENTIAL }}" > ./${{ secrets.GOOGLE_CREDENTIAL_FILE }}
+          echo "${{ secrets.GOOGLE_CREDENTIAL }}" | base64 --decode > ./${{ secrets.GOOGLE_CREDENTIAL_FILE }}
         working-directory: ${{ env.working-directory }}
 
 
