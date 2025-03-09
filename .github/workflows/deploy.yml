@@ -27,7 +27,7 @@ jobs:
           pwd
           cd ./src/main/resources
           touch ./${{ secrets.APPLICATION_PROFILE_FILE }}
-          echo "${{ secrets.APPLICATION_PROFILE }}" > ./${{ secrets.APPLICATION_PROFILE_FILE }}
+          echo "${{ secrets.APPLICATION_PROFILE }}" | base64 --decode > ./${{ secrets.APPLICATION_PROFILE_FILE }}
         working-directory: ${{ env.working-directory }}
 
       - name: Apply google credentials
