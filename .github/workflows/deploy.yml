@@ -81,5 +81,5 @@ jobs:
           port: 22
           script: |
             cd
-            cd ${{ secrets.DISCORD_APP_PATH }}
-            sudo sh bin/deploy.sh
+            cd ${{ secrets.DISCORD_APP_PATH }} && cd ./bin
+            sudo sh deploy.sh
