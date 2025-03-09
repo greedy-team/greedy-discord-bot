@@ -82,4 +82,5 @@ jobs:
           script: |
             cd
             cd ${{ secrets.DISCORD_APP_PATH }} && cd ./bin
+            echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
             sudo sh deploy.sh
