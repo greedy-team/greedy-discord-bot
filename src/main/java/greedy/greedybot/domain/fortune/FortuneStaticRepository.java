@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class FortuneStaticRepository {
 
-    private static final List<String> dummyFortunes = List.of(
+    private static final List<String> DUMMY_FORTUNES = List.of(
             """
                     ### 🚀 초긍정 (SSS)
                     
@@ -137,13 +137,13 @@ public class FortuneStaticRepository {
     );
 
     public int getSize() {
-        return dummyFortunes.size();
+        return DUMMY_FORTUNES.size();
     }
 
     public String getFortuneByIndex(final int todayFortuneIndex) {
-        if (todayFortuneIndex < 0 || todayFortuneIndex >= dummyFortunes.size()) {
+        if (todayFortuneIndex < 0 || todayFortuneIndex >= DUMMY_FORTUNES.size()) {
             throw new GreedyBotException("오늘의 운세를 찾을 수 없습니다.");
         }
-        return dummyFortunes.get(todayFortuneIndex);
+        return DUMMY_FORTUNES.get(todayFortuneIndex);
     }
 }
