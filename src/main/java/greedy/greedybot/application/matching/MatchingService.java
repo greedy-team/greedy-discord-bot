@@ -1,11 +1,10 @@
 package greedy.greedybot.application.matching;
 
 import greedy.greedybot.application.matching.dto.MatchingResult;
-import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.stereotype.Service;
 
 
 @Service
@@ -30,7 +29,8 @@ public class MatchingService {
 
     // 리뷰이가 리뷰어보다 적을때 랜덤 매칭
     // 리뷰이 사람 수 만큼 리뷰어를 랜덤 선택하여 매칭 결과 생성
-    private MatchingResult matchWhenRevieweesAreFewer(final List<String> reviewees, final List<String> randomReviewers) {
+    private MatchingResult matchWhenRevieweesAreFewer(final List<String> reviewees,
+                                                      final List<String> randomReviewers) {
         // { 리뷰어1 : [리뷰이1] } 형태로 매칭 결과 표현
         final Map<String, List<String>> matchingResult = new HashMap<>();
 
