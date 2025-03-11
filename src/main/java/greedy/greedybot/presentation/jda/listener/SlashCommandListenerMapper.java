@@ -4,7 +4,6 @@ import greedy.greedybot.common.exception.GreedyBotException;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -22,7 +21,7 @@ public class SlashCommandListenerMapper extends ListenerAdapter {
     private final Map<String, SlashCommandListener> slashCommandListenersByCommandName;
 
     @Value("${discord.command.permission_id}")
-    private String COMMAND_PERMISSION_ID;
+    private String commandPermissionId;
 
     public SlashCommandListenerMapper(final Set<SlashCommandListener> slashCommandListeners) {
         this.slashCommandListenersByCommandName = slashCommandListeners.stream()
@@ -32,7 +31,7 @@ public class SlashCommandListenerMapper extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull final SlashCommandInteractionEvent event) {
         final boolean hasRole = event.getMember().getRoles().stream()
-                .anyMatch(role -> role.getId().equals(COMMAND_PERMISSION_ID));
+                .anyMatch(role -> role.getId().equals(commandPermissionId));
         if (!hasRole) {
             log.warn("[COMMAND PERMISSION DENIED]: {}", event.getMember().getNickname());
             event.reply("이 명령어를 사용할 권한이 없습니다.").setEphemeral(true).queue();

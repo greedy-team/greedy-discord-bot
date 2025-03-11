@@ -3,6 +3,10 @@ package greedy.greedybot.presentation.jda.listener;
 import greedy.greedybot.application.matching.MatchingService;
 import greedy.greedybot.application.matching.dto.MatchingResult;
 import greedy.greedybot.common.exception.GreedyBotException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -15,20 +19,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 @Component
 public class ReviewMatchListener implements AutoCompleteInteractionListener {
 
     private static final Logger log = LoggerFactory.getLogger(ReviewMatchListener.class);
     private static final List<String> reviewees = List.of(
-            "BE-2기: 김지우, 이창희, 황혜림, 전서희, 허석준",
+            "BE-2기: 김지우, 이창희, 황혜림, 전서희, 허석준, 염지환",
             "FE-2기: 강동현, 신지훈, 신지우, 박찬빈, 임규영, 정창우"
     );
-    private static final List<String> reviewers =  List.of(
+    private static final List<String> reviewers = List.of(
             "BE-2기: 원태연, 백경환, 송은우, 조승현, 정다빈",
             "FE-2기: 김범수, 김의천, 송혜정, 김민석"
     );
@@ -79,7 +78,6 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
         final List<String> reviewees = extractNamesFromRawString(revieweesRawString);
         final List<String> reviewers = extractNamesFromRawString(reviewersRawString);
 
-
         MatchingResult matchingResultAnnouncement = matchingService.matchStudy(reviewees, reviewers);
 
         log.info("[MATCH SUCCESS]");
@@ -103,7 +101,8 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
         }
     }
 
-    private List<Command.Choice> setOptions(final List<String> greedyMembers, final CommandAutoCompleteInteractionEvent event) {
+    private List<Command.Choice> setOptions(final List<String> greedyMembers,
+                                            final CommandAutoCompleteInteractionEvent event) {
         return greedyMembers.stream()
                 .filter(member -> member.startsWith(event.getFocusedOption().getValue()))
                 .map(member -> new Command.Choice(member, member))
@@ -128,7 +127,8 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
                 .collect(Collectors.toList());
     }
 
-    private void validateOptions(final OptionMapping optionMission, final OptionMapping optionReviewees, final OptionMapping optionReviewers) {
+    private void validateOptions(final OptionMapping optionMission, final OptionMapping optionReviewees,
+                                 final OptionMapping optionReviewers) {
         if (Objects.isNull(optionMission)) {
             log.warn("[EMPTY MISSION]");
             throw new GreedyBotException("\uD83D\uDEAB 미션 정보가 입력 되지 않았습니다.");

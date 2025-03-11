@@ -1,9 +1,8 @@
 package greedy.greedybot.application.matching;
 
-import org.springframework.stereotype.Component;
-
 import java.util.Collections;
 import java.util.List;
+import org.springframework.stereotype.Component;
 
 @Component
 public class RandomShuffleStrategy implements ShuffleStrategy {
