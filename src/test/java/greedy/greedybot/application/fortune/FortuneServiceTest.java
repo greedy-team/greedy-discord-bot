@@ -3,16 +3,17 @@ package greedy.greedybot.application.fortune;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.NONE;
 
+import greedy.greedybot.domain.fortune.FortuneStaticRepository;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(webEnvironment = NONE)
 class FortuneServiceTest {
 
-    @Autowired
-    private FortuneService fortuneService;
+    private final FortuneService fortuneService = new FortuneService(
+            new FortuneStaticRepository()
+    );
 
     @Test
     void findTodayFortuneByKey() {
