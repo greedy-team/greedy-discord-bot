@@ -9,7 +9,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class ScheduledMessageDiscordRepository implements ScheduledMessageRepository {
@@ -31,10 +33,9 @@ public class ScheduledMessageDiscordRepository implements ScheduledMessageReposi
                 .stream()
                 .filter(message -> message.getContentDisplay().startsWith(id + "|"))
                 .findFirst()
-                .ifPresentOrElse(
-                        message -> message.delete().queue(),
-                        () -> { throw new GreedyBotException("❌ 예약된 메시지를 찾을 수 없습니다."); }
-                );
+                .orElseThrow(() -> new GreedyBotException("❌ 예약된 메시지를 찾을 수 없습니다.")) // ✅ 안전한 예외 처리 방식
+                .delete()
+                .queue();
     }
 
     @Override
@@ -43,10 +44,27 @@ public class ScheduledMessageDiscordRepository implements ScheduledMessageReposi
                 .stream()
                 .filter(msg -> msg.getContentDisplay().startsWith(formId + "|"))
                 .findFirst()
-                .map(msg -> {
-                    String[] parts = msg.getContentDisplay().split("\\|");
+                .map(message -> {
+                    String[] parts = message.getContentDisplay().split("\\|");
                     return new ScheduledMessage(parts[1], LocalDateTime.parse(parts[2]), parts[3], scheduledMessageChannel.getId());
                 });
 
+    }
+
+    @Override
+    public List<ScheduledMessage> findAll() {
+        return scheduledMessageChannel.getHistory().retrievePast(100).complete()
+                .stream()
+                .filter(message -> message.getContentDisplay().contains("|")) // ✅ `|` 없는 메시지는 제외
+                .map(message -> {
+                    String[] parts = message.getContentDisplay().split("\\|");
+                    return new ScheduledMessage(
+                            parts[0],
+                            parts[1],
+                            LocalDateTime.parse(parts[2]),
+                            parts[3],
+                            scheduledMessageChannel.getId());
+                })
+                .toList();
     }
 }

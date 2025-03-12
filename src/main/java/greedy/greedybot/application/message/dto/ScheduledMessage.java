@@ -19,6 +19,14 @@ public class ScheduledMessage {
         this.channelId = channelId;
     }
 
+    public ScheduledMessage(String id, String content, LocalDateTime scheduledTime, String userId, String channelId) {
+        this.id = id; // 기존 UUID 자동 생성 대신 직접 전달받음
+        this.content = content;
+        this.scheduledTime = scheduledTime;
+        this.userId = userId;
+        this.channelId = channelId;
+    }
+
     public String getId() {
         return id;
     }
