@@ -23,7 +23,7 @@ public class ScheduledCommandListener implements SlashCommandListener {
     private final ScheduledMessageService scheduledMessageService;
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss", Locale.ENGLISH);
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm", Locale.ENGLISH);
 
     public ScheduledCommandListener(ScheduledMessageService scheduledMessageService) {
         this.scheduledMessageService = scheduledMessageService;
@@ -36,7 +36,7 @@ public class ScheduledCommandListener implements SlashCommandListener {
 
     @Override
     public SlashCommandData getCommandData() {
-        return Commands.slash("scheduled", "Schedule a message")
+        return Commands.slash("add-scheduled-message", "Schedule a message")
                 .addOption(OptionType.STRING, "message", "The message to send", true)
                 .addOption(OptionType.STRING, "time", "The time to send (yyyy-MM-dd HH:mm)", true);
     }
@@ -69,7 +69,7 @@ public class ScheduledCommandListener implements SlashCommandListener {
 
     public LocalDateTime parseScheduledTime(String timeString) {
         try {
-           return LocalDateTime.parse(timeString, DATE_TIME_FORMATTER);
+            return LocalDateTime.parse(timeString, DATE_TIME_FORMATTER);
         } catch (DateTimeParseException e) {
             log.error("❌ 잘못된 시간 형식: {}", timeString);
             throw new GreedyBotException("❌ 잘못된 시간 형식입니다! yyyy-MM-dd HH:mm 형식으로 입력해주세요.");
