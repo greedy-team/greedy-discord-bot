@@ -6,9 +6,9 @@ import java.util.Optional;
 
 public interface ScheduledMessageRepository {
 
-    void save(final ScheduledMessage message);
+    void saveScheduledMessage(final ScheduledMessage message);
 
-    void delete(final String formId);
+    void deleteScheduledMessage(final String formId);
 
     Optional<ScheduledMessage> findByFormId(final String formId);
 }

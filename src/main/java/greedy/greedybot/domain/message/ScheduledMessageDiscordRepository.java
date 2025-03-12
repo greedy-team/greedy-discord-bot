@@ -21,12 +21,12 @@ public class ScheduledMessageDiscordRepository implements ScheduledMessageReposi
     }
 
     @Override
-    public void save(ScheduledMessage message) {
+    public void saveScheduledMessage(ScheduledMessage message) {
         scheduledMessageChannel.sendMessage(message.getId() + "|" + message.getContent() + "|" + message.getScheduledTime() + "|" + message.getUserId()).queue();
     }
 
     @Override
-    public void delete(String id) {
+    public void deleteScheduledMessage(String id) {
         scheduledMessageChannel.getHistory().retrievePast(100).complete()
                 .stream()
                 .filter(message -> message.getContentDisplay().startsWith(id + "|"))

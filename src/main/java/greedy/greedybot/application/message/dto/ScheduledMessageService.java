@@ -1,6 +1,5 @@
 package greedy.greedybot.application.message.dto;
 
-import greedy.greedybot.domain.message.ScheduledMessageDiscordRepository;
 import greedy.greedybot.domain.message.ScheduledMessageRepository;
 import greedy.greedybot.presentation.jda.listener.ScheduledMessageScheduler;
 import org.springframework.context.annotation.Lazy;
@@ -18,6 +17,6 @@ public class ScheduledMessageService {
     }
 
     public void scheduleMessage(ScheduledMessage message){
-        scheduledMessageRepository.save(message);
+        scheduledMessageRepository.saveScheduledMessage(message);
     }
 }
