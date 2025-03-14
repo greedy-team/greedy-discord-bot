@@ -22,7 +22,9 @@ public class JdaConfiguration {
     @Value("${discord.guild_id}")
     private String guildId;
     @Value("${discord.google_form_watch_channel_id}")
-    private String channelId;
+    private String googleFormChannelId;
+    @Value("${discord.scheduled_message_channel_id}")
+    private String scheduledMessageChannelId;
 
     public JdaConfiguration(final SlashCommandListenerMapper slashCommandListenerMapper) {
         this.slashCommandListenerMapper = slashCommandListenerMapper;
@@ -54,6 +56,11 @@ public class JdaConfiguration {
 
     @Bean
     TextChannel googleFormWatchChannel(final JDA jda) {
-        return jda.getTextChannelById(channelId);
+        return jda.getTextChannelById(googleFormChannelId);
+    }
+
+    @Bean
+    TextChannel scheduledMessageChannel(final JDA jda) {
+        return jda.getTextChannelById(scheduledMessageChannelId);
     }
 }
