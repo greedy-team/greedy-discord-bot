@@ -1,6 +1,6 @@
 package greedy.greedybot.presentation.jda.listener;
 
-import greedy.greedybot.application.message.dto.ScheduledMessage;
+import greedy.greedybot.domain.message.ScheduledMessage;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 

@@ -1,19 +1,16 @@
-package greedy.greedybot.application.message.dto;
+package greedy.greedybot.application.message;
 
+import greedy.greedybot.domain.message.ScheduledMessage;
 import greedy.greedybot.domain.message.ScheduledMessageRepository;
-import greedy.greedybot.presentation.jda.listener.ScheduledMessageScheduler;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ScheduledMessageService {
 
     private final ScheduledMessageRepository scheduledMessageRepository;
-    private final ScheduledMessageScheduler scheduledMessageScheduler;
 
-    public ScheduledMessageService(ScheduledMessageRepository repository, @Lazy ScheduledMessageScheduler scheduler) {
+    public ScheduledMessageService(ScheduledMessageRepository repository) {
         this.scheduledMessageRepository = repository;
-        this.scheduledMessageScheduler = scheduler;
     }
 
     public void scheduleMessage(ScheduledMessage message){

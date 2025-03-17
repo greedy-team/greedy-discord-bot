@@ -1,6 +1,6 @@
-package greedy.greedybot.presentation.jda.listener;
+package greedy.greedybot.application.message;
 
-import greedy.greedybot.application.message.dto.ScheduledMessage;
+import greedy.greedybot.domain.message.ScheduledMessage;
 import greedy.greedybot.domain.message.ScheduledMessageRepository;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -12,13 +12,11 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 @Component
 public class ScheduledMessageScheduler {
 
-    private final Logger log = LoggerFactory.getLogger(StatusCommandListener.class);
+    private final Logger log = LoggerFactory.getLogger(ScheduledMessageScheduler.class);
     private final JDA jda;
     private final ScheduledMessageRepository repository;
 
@@ -30,9 +28,9 @@ public class ScheduledMessageScheduler {
     @Scheduled(fixedDelay = 30000)
     public void checkScheduledMessages() {
         LocalDateTime now = LocalDateTime.now();
-        List<ScheduledMessage> pendingMEssages = repository.findAll();
+        List<ScheduledMessage> pendingMessages = repository.findAll();
 
-        for (ScheduledMessage message : pendingMEssages) {
+        for (ScheduledMessage message : pendingMessages) {
             if (message.getScheduledTime().isBefore(now)) {
                 sendScheduledMessage(message);
                 repository.deleteScheduledMessage(message.getId());

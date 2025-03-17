@@ -1,9 +1,6 @@
 package greedy.greedybot.domain.message;
 
-import greedy.greedybot.application.message.dto.ScheduledMessage;
 import greedy.greedybot.common.exception.GreedyBotException;
-import greedy.greedybot.domain.form.GoogleFormWatch;
-import greedy.greedybot.presentation.jda.listener.ScheduledMessageScheduler;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
@@ -11,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 public class ScheduledMessageDiscordRepository implements ScheduledMessageRepository {
@@ -39,7 +35,7 @@ public class ScheduledMessageDiscordRepository implements ScheduledMessageReposi
     }
 
     @Override
-    public Optional<ScheduledMessage> findByFormId(String formId) {
+    public Optional<ScheduledMessage> findById(String formId) {
         return scheduledMessageChannel.getHistory().retrievePast(100).complete()
                 .stream()
                 .filter(msg -> msg.getContentDisplay().startsWith(formId + "|"))

@@ -1,7 +1,7 @@
 package greedy.greedybot.presentation.jda.listener;
 
-import greedy.greedybot.application.message.dto.ScheduledMessage;
-import greedy.greedybot.application.message.dto.ScheduledMessageService;
+import greedy.greedybot.domain.message.ScheduledMessage;
+import greedy.greedybot.application.message.ScheduledMessageService;
 import greedy.greedybot.common.exception.GreedyBotException;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
