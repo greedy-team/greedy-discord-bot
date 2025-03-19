@@ -52,11 +52,11 @@ public class SlashCommandListenerMapper extends ListenerAdapter {
 
     private boolean hasRole(final @NotNull SlashCommandInteractionEvent event,
                             final Set<DiscordRole> allowedRoles) {
-        final Set<Long> collect = allowedRoles.stream()
+        final Set<Long> allowedRoleIds = allowedRoles.stream()
                 .map(discordRoles::getRoleId)
                 .collect(Collectors.toSet());
         return event.getMember().getRoles().stream()
-                .anyMatch(role -> collect.contains(role.getIdLong()));
+                .anyMatch(role -> allowedRoleIds.contains(role.getIdLong()));
     }
 
     @Override
