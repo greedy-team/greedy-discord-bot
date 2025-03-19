@@ -1,5 +1,7 @@
 package greedy.greedybot.presentation.jda.listener;
 
+import greedy.greedybot.presentation.jda.role.DiscordRole;
+import java.util.Set;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -13,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class StatusCommandListener implements SlashCommandListener {
 
-    private final Logger log = LoggerFactory.getLogger(StatusCommandListener.class);
+    private static final Logger log = LoggerFactory.getLogger(StatusCommandListener.class);
 
     public String getCommandName() {
         return "status";
@@ -39,5 +41,10 @@ public class StatusCommandListener implements SlashCommandListener {
         log.info("hello: {}", hello);
 
         event.reply("Ok!").queue();
+    }
+
+    @Override
+    public Set<DiscordRole> allowedRoles() {
+        return Set.of(DiscordRole.values());
     }
 }

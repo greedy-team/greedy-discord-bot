@@ -3,6 +3,8 @@ package greedy.greedybot.presentation.jda.listener;
 import greedy.greedybot.domain.message.ScheduledMessage;
 import greedy.greedybot.application.message.ScheduledMessageService;
 import greedy.greedybot.common.exception.GreedyBotException;
+import greedy.greedybot.presentation.jda.role.DiscordRole;
+import java.util.Set;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -20,10 +22,10 @@ import java.util.Locale;
 @Component
 public class ScheduledCommandListener implements SlashCommandListener {
 
-    private final ScheduledMessageService scheduledMessageService;
-    private final Logger log = LoggerFactory.getLogger(getClass());
-
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm", Locale.ENGLISH);
+    private static final Logger log = LoggerFactory.getLogger(ScheduledCommandListener.class);
+
+    private final ScheduledMessageService scheduledMessageService;
 
     public ScheduledCommandListener(ScheduledMessageService scheduledMessageService) {
         this.scheduledMessageService = scheduledMessageService;
@@ -52,7 +54,7 @@ public class ScheduledCommandListener implements SlashCommandListener {
             LocalDateTime time = parseScheduledTime(timeString);
 
             // 2. 과거 시간 입력 여부 확인
-            IsValidscheduledTime(time);
+            isValidScheduledTime(time);
 
             log.info("예약된 메시지: {}", message);
             log.info("예약된 시간: {}", time);
@@ -76,12 +78,17 @@ public class ScheduledCommandListener implements SlashCommandListener {
         }
     }
 
-    public void IsValidscheduledTime(LocalDateTime time) {
+    public void isValidScheduledTime(LocalDateTime time) {
         final LocalDateTime now = LocalDateTime.now();
 
         if (time.isBefore(now)) {
             log.error("❌ 잘못된 예약 시간: {} (과거 시간 입력됨)", time);
             throw new GreedyBotException("❌ 예약할 시간은 현재 시간 이후여야 합니다!");
         }
+    }
+
+    @Override
+    public Set<DiscordRole> allowedRoles() {
+        return Set.of(DiscordRole.LEAD);
     }
 }

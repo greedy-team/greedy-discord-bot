@@ -2,7 +2,9 @@ package greedy.greedybot.presentation.jda.listener;
 
 import greedy.greedybot.application.fortune.FortuneService;
 import greedy.greedybot.common.exception.GreedyBotException;
+import greedy.greedybot.presentation.jda.role.DiscordRole;
 import java.time.LocalDate;
+import java.util.Set;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -17,11 +19,9 @@ import org.springframework.stereotype.Component;
 public class FortuneTodayCommandListener implements SlashCommandListener {
 
     private static final Logger log = LoggerFactory.getLogger(FortuneTodayCommandListener.class);
-
+    private final FortuneService fortuneService;
     @Value("${discord.fortune_today_channel_id}")
     private Long allowedChannelId;
-
-    private final FortuneService fortuneService;
 
     public FortuneTodayCommandListener(final FortuneService fortuneService) {
         this.fortuneService = fortuneService;
@@ -34,7 +34,7 @@ public class FortuneTodayCommandListener implements SlashCommandListener {
 
     @Override
     public SlashCommandData getCommandData() {
-        return Commands.slash(this.getCommandName(), "오늘의 운세를 알려줍니다. 운세는 하루 단위로 달라집니다!");
+        return Commands.slash(this.getCommandName(), "오늘의 개발 운세를 알려줍니다. 운세는 하루 단위로 달라집니다!");
     }
 
     @Override
@@ -59,5 +59,10 @@ public class FortuneTodayCommandListener implements SlashCommandListener {
             log.warn("[NOT ALLOWED CHANNEL COMMAND]: {}", event.getUser().getEffectiveName());
             throw new GreedyBotException("오늘의 운세는 현재 채널에서 사용할 수 없습니다");
         }
+    }
+
+    @Override
+    public Set<DiscordRole> allowedRoles() {
+        return Set.of(DiscordRole.MEMBER, DiscordRole.COLLABORATOR, DiscordRole.LEAD);
     }
 }

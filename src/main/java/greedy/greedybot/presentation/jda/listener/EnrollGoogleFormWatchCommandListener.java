@@ -2,7 +2,9 @@ package greedy.greedybot.presentation.jda.listener;
 
 import greedy.greedybot.application.googleform.GoogleFormService;
 import greedy.greedybot.application.googleform.dto.EnrollFormWatchResult;
+import greedy.greedybot.presentation.jda.role.DiscordRole;
 import java.util.Objects;
+import java.util.Set;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -58,5 +60,10 @@ public class EnrollGoogleFormWatchCommandListener implements SlashCommandListene
                         - 등록된 응답 수: %d
                         """.formatted(result.formTitle(), result.responseCount()))
                 .queue();
+    }
+
+    @Override
+    public Set<DiscordRole> allowedRoles() {
+        return Set.of(DiscordRole.LEAD);
     }
 }

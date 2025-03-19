@@ -16,7 +16,8 @@ import java.util.List;
 @Component
 public class ScheduledMessageScheduler {
 
-    private final Logger log = LoggerFactory.getLogger(ScheduledMessageScheduler.class);
+    private final static Logger log = LoggerFactory.getLogger(ScheduledMessageScheduler.class);
+
     private final JDA jda;
     private final ScheduledMessageRepository repository;
 
