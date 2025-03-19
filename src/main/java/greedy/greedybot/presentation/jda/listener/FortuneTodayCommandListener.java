@@ -2,7 +2,9 @@ package greedy.greedybot.presentation.jda.listener;
 
 import greedy.greedybot.application.fortune.FortuneService;
 import greedy.greedybot.common.exception.GreedyBotException;
+import greedy.greedybot.presentation.jda.role.DiscordRole;
 import java.time.LocalDate;
+import java.util.Set;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -59,5 +61,10 @@ public class FortuneTodayCommandListener implements SlashCommandListener {
             log.warn("[NOT ALLOWED CHANNEL COMMAND]: {}", event.getUser().getEffectiveName());
             throw new GreedyBotException("오늘의 운세는 현재 채널에서 사용할 수 없습니다");
         }
+    }
+
+    @Override
+    public Set<DiscordRole> allowedRoles() {
+        return Set.of(DiscordRole.MEMBER, DiscordRole.COLLABORATOR, DiscordRole.LEAD);
     }
 }

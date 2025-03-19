@@ -1,7 +1,9 @@
 package greedy.greedybot.presentation.jda.listener;
 
 import greedy.greedybot.application.googleform.GoogleFormService;
+import greedy.greedybot.presentation.jda.role.DiscordRole;
 import java.util.Objects;
+import java.util.Set;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -54,5 +56,10 @@ public class RemoveGoogleFormWatchCommandListener implements SlashCommandListene
         event.getHook().sendMessage("""
                 ✅ %s 구글폼 구독을 해제했습니다.
                 """.formatted(removeFormWatchTitle)).queue();
+    }
+
+    @Override
+    public Set<DiscordRole> allowedRoles() {
+        return Set.of(DiscordRole.LEAD);
     }
 }

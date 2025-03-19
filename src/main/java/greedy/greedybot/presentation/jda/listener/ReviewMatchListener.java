@@ -3,9 +3,11 @@ package greedy.greedybot.presentation.jda.listener;
 import greedy.greedybot.application.matching.MatchingService;
 import greedy.greedybot.application.matching.dto.MatchingResult;
 import greedy.greedybot.common.exception.GreedyBotException;
+import greedy.greedybot.presentation.jda.role.DiscordRole;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -84,6 +86,11 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
 
         String message = "[**" + mission + "** 리뷰어 매칭 결과]\n\n" + matchingResultAnnouncement.toDiscordAnnouncement();
         event.getHook().sendMessage(message).queue();
+    }
+
+    @Override
+    public Set<DiscordRole> allowedRoles() {
+        return Set.of(DiscordRole.LEAD);
     }
 
     @Override
