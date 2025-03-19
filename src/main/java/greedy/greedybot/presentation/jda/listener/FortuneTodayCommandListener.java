@@ -19,11 +19,9 @@ import org.springframework.stereotype.Component;
 public class FortuneTodayCommandListener implements SlashCommandListener {
 
     private static final Logger log = LoggerFactory.getLogger(FortuneTodayCommandListener.class);
-
+    private final FortuneService fortuneService;
     @Value("${discord.fortune_today_channel_id}")
     private Long allowedChannelId;
-
-    private final FortuneService fortuneService;
 
     public FortuneTodayCommandListener(final FortuneService fortuneService) {
         this.fortuneService = fortuneService;

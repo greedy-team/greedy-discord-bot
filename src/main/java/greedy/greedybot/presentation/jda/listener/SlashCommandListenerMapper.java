@@ -22,7 +22,8 @@ public class SlashCommandListenerMapper extends ListenerAdapter {
     private final Map<String, SlashCommandListener> slashCommandListenersByCommandName;
     private final DiscordRoles discordRoles;
 
-    public SlashCommandListenerMapper(final Set<SlashCommandListener> slashCommandListeners, final DiscordRoles discordRoles) {
+    public SlashCommandListenerMapper(final Set<SlashCommandListener> slashCommandListeners,
+                                      final DiscordRoles discordRoles) {
         this.slashCommandListenersByCommandName = slashCommandListeners.stream()
                 .collect(Collectors.toMap(SlashCommandListener::getCommandName, it -> it));
         this.discordRoles = discordRoles;
