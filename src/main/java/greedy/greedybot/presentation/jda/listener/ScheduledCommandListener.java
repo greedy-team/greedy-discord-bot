@@ -54,7 +54,7 @@ public class ScheduledCommandListener implements SlashCommandListener {
             LocalDateTime time = parseScheduledTime(timeString);
 
             // 2. 과거 시간 입력 여부 확인
-            IsValidScheduledTime(time);
+            isValidScheduledTime(time);
 
             log.info("예약된 메시지: {}", message);
             log.info("예약된 시간: {}", time);
@@ -78,7 +78,7 @@ public class ScheduledCommandListener implements SlashCommandListener {
         }
     }
 
-    public void IsValidScheduledTime(LocalDateTime time) {
+    public void isValidScheduledTime(LocalDateTime time) {
         final LocalDateTime now = LocalDateTime.now();
 
         if (time.isBefore(now)) {
