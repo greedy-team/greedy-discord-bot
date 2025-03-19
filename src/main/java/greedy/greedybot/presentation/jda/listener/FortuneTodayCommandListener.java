@@ -36,7 +36,7 @@ public class FortuneTodayCommandListener implements SlashCommandListener {
 
     @Override
     public SlashCommandData getCommandData() {
-        return Commands.slash(this.getCommandName(), "오늘의 운세를 알려줍니다. 운세는 하루 단위로 달라집니다!");
+        return Commands.slash(this.getCommandName(), "오늘의 개발 운세를 알려줍니다. 운세는 하루 단위로 달라집니다!");
     }
 
     @Override

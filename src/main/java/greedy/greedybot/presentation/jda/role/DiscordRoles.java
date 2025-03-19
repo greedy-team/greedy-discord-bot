@@ -18,7 +18,7 @@ public class DiscordRoles {
         );
     }
 
-    public long getRoleById(final DiscordRole discordRole) {
+    public long getRoleId(final DiscordRole discordRole) {
         if (!idsByDiscordRole.containsKey(discordRole)) {
             throw new GreedyBotException("해당 역할이 존재하지 않습니다");
         }

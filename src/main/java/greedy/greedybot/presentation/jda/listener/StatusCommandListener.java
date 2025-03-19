@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class StatusCommandListener implements SlashCommandListener {
 
-    private final Logger log = LoggerFactory.getLogger(StatusCommandListener.class);
+    private static final Logger log = LoggerFactory.getLogger(StatusCommandListener.class);
 
     public String getCommandName() {
         return "status";
