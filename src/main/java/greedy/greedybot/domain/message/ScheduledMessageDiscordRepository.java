@@ -62,7 +62,6 @@ public class ScheduledMessageDiscordRepository implements ScheduledMessageReposi
     public List<ScheduledMessage> findAll() {
         return scheduledMessageChannel.getHistory().retrievePast(100).complete()
                 .stream()
-                //.filter(message -> message.getContentDisplay().split("\\|").length >= 5)
                 .map(message -> {
                     String[] parts = message.getContentDisplay().split("\\|");
                     if (parts.length < 5)

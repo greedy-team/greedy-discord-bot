@@ -49,6 +49,5 @@ public class ScheduledMessageScheduler {
 
         channel.sendMessage(scheduledMessage.getContent()).queue();
         log.info("📢 예약된 메시지가 Discord 채널({})에 전송됨: {}", scheduledMessage.getChannelId(), scheduledMessage.getContent());
-
     }
 }
