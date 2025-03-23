@@ -48,24 +48,26 @@ public class ScheduledCommandListener implements SlashCommandListener {
         try {
             final String message = event.getOption("message").getAsString();
             final String timeString = event.getOption("time").getAsString();
-            final String channelId = event.getChannelId();
+            final String channelId = event.getChannelId(); // 명령어 입력한 채널의 ID 저장
 
             // 1. 시간 형식 검증
             LocalDateTime time = parseScheduledTime(timeString);
-
             // 2. 과거 시간 입력 여부 확인
             isValidScheduledTime(time);
 
-            log.info("예약된 메시지: {}", message);
-            log.info("예약된 시간: {}", time);
+            event.deferReply().queue();
+
+            //log.info("예약된 메시지: {}", message);
+            //log.info("예약된 시간: {}", time);
 
             final ScheduledMessage scheduledMessage = new ScheduledMessage(message, time, event.getUser().getId(), channelId);
             scheduledMessageService.scheduleMessage(scheduledMessage);
 
-            event.reply("✅ 메시지가 " + timeString + "에 예약되었습니다.").queue();
+            log.info("!!!!메세지가 메세지가! "+ channelId+" 채널에 예약되었습니다");
+            event.getHook().sendMessage("✅ 메시지가 " + timeString + "에 예약되었습니다.").queue();
         } catch (GreedyBotException e) {
             log.error(e.getMessage());
-            event.reply(e.getMessage()).setEphemeral(true).queue();
+            event.getHook().sendMessage(e.getMessage()).setEphemeral(true).queue();
         }
     }
 

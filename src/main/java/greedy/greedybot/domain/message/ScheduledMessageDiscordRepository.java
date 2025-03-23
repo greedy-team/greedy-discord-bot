@@ -20,7 +20,13 @@ public class ScheduledMessageDiscordRepository implements ScheduledMessageReposi
 
     @Override
     public void saveScheduledMessage(ScheduledMessage message) {
-        scheduledMessageChannel.sendMessage(message.getId() + "|" + message.getContent() + "|" + message.getScheduledTime() + "|" + message.getUserId()).queue();
+        scheduledMessageChannel.sendMessage(
+                message.getId() + "|" +
+                        message.getContent() + "|" +
+                        message.getScheduledTime() + "|" +
+                        message.getUserId() + "|" +
+                        message.getChannelId()
+        ).queue();
     }
 
     @Override
@@ -42,7 +48,12 @@ public class ScheduledMessageDiscordRepository implements ScheduledMessageReposi
                 .findFirst()
                 .map(message -> {
                     String[] parts = message.getContentDisplay().split("\\|");
-                    return new ScheduledMessage(parts[1], LocalDateTime.parse(parts[2]), parts[3], scheduledMessageChannel.getId());
+                    return new ScheduledMessage(
+                            parts[0],
+                            parts[1],
+                            LocalDateTime.parse(parts[2]),
+                            parts[3],
+                            parts[4]);
                 });
 
     }
@@ -51,16 +62,20 @@ public class ScheduledMessageDiscordRepository implements ScheduledMessageReposi
     public List<ScheduledMessage> findAll() {
         return scheduledMessageChannel.getHistory().retrievePast(100).complete()
                 .stream()
-                .filter(message -> message.getContentDisplay().contains("|")) // ✅ `|` 없는 메시지는 제외
+                //.filter(message -> message.getContentDisplay().split("\\|").length >= 5)
                 .map(message -> {
                     String[] parts = message.getContentDisplay().split("\\|");
+                    if (parts.length < 5)
+                        return null;
                     return new ScheduledMessage(
                             parts[0],
                             parts[1],
                             LocalDateTime.parse(parts[2]),
                             parts[3],
-                            scheduledMessageChannel.getId());
+                            parts[4]
+                    );
                 })
+                .filter(msg -> msg != null)
                 .toList();
     }
 }
