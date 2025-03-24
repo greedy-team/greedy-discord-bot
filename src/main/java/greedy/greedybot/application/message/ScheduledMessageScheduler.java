@@ -26,7 +26,7 @@ public class ScheduledMessageScheduler {
         this.repository = repository;
     }
 
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 60000)
     public void checkScheduledMessages() {
         LocalDateTime now = LocalDateTime.now();
         List<ScheduledMessage> pendingMessages = repository.findAll();
@@ -42,8 +42,12 @@ public class ScheduledMessageScheduler {
     private void sendScheduledMessage(ScheduledMessage scheduledMessage) {
         TextChannel channel = jda.getTextChannelById(scheduledMessage.getChannelId());
 
-        channel.sendMessage(scheduledMessage.getContent()).queue();
-        log.info("📢 예약된 메시지가 Discord 채널({})에 전송됨: {}", scheduledMessage.getContent(), scheduledMessage.getContent());
+        if (channel == null) {
+            log.warn("⚠ 채널을 찾을 수 없습니다. 채널 ID: {}", scheduledMessage.getChannelId());
+            return;
+        }
 
+        channel.sendMessage(scheduledMessage.getContent()).queue();
+        log.info("📢 예약된 메시지가 Discord 채널({})에 전송됨: {}", scheduledMessage.getChannelId(), scheduledMessage.getContent());
     }
 }
