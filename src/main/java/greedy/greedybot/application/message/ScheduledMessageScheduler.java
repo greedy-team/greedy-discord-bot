@@ -26,7 +26,7 @@ public class ScheduledMessageScheduler {
         this.repository = repository;
     }
 
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 60000)
     public void checkScheduledMessages() {
         LocalDateTime now = LocalDateTime.now();
         List<ScheduledMessage> pendingMessages = repository.findAll();
