@@ -22,11 +22,10 @@ public class ScheduledMessageTask extends TimerTask {
     public void run() {
         TextChannel channel = jda.getTextChannelById(scheduledMessage.getChannelId());
 
-        if (channel == null) {
-            channel.sendMessage(scheduledMessage.getContent());
+        if (channel != null) {
+            channel.sendMessage(scheduledMessage.getContent()).queue();
             System.out.println("📢 예약된 메시지가 Discord 채널(" + scheduledMessage.getChannelId() + ")에 전송됨: " + scheduledMessage.getContent());
-        }
-        else {
+        } else {
             System.out.println("⚠ 채널을 찾을 수 없음: " + scheduledMessage.getChannelId());
         }
 
