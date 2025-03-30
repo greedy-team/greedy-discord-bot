@@ -37,12 +37,6 @@ public class ScheduledCommandListener implements AutoCompleteInteractionListener
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm", Locale.ENGLISH);
     private static final Logger log = LoggerFactory.getLogger(ScheduledCommandListener.class);
 
-    private final ScheduledMessageService scheduledMessageService;
-    private final ScheduledMessageChannels scheduledMessageChannels;
-
-    @Value("${discord.message_writing_channel}")
-    private Long allowedChannelId;
-
     private static final Map<String, ScheduledMessageChannel> CHANNEL_NAME_TO_ENUM = Map.of(
             "🚀공통-자유", ScheduledMessageChannel.NOTICE,
             "🍃백엔드-스터디", ScheduledMessageChannel.BACKEND,
@@ -50,6 +44,12 @@ public class ScheduledCommandListener implements AutoCompleteInteractionListener
             "\uD83E\uDEE7리드-대화", ScheduledMessageChannel.LEAD_CONVERSATION,
             "tf-discord-test-groud", ScheduledMessageChannel.TEST
     );
+
+    private final ScheduledMessageService scheduledMessageService;
+    private final ScheduledMessageChannels scheduledMessageChannels;
+
+    @Value("${discord.message_writing_channel}")
+    private Long allowedChannelId;
 
     public ScheduledCommandListener(ScheduledMessageService scheduledMessageService, ScheduledMessageChannels scheduledMessageChannels) {
         this.scheduledMessageService = scheduledMessageService;
@@ -70,7 +70,7 @@ public class ScheduledCommandListener implements AutoCompleteInteractionListener
     }
 
     @Override
-    public void onAction(@NotNull SlashCommandInteractionEvent event) {
+    public void onAction(final @NotNull SlashCommandInteractionEvent event) {
         try {
             validateAllowedChannel(event);
 
@@ -82,8 +82,8 @@ public class ScheduledCommandListener implements AutoCompleteInteractionListener
             LocalDateTime time = parseScheduledTime(timeString); //형식 검증
             isValidScheduledTime(time);//과거 시간 입력 검증
 
-            ScheduledMessageChannel selectedEnum = CHANNEL_NAME_TO_ENUM.get(channelId);
-            long resolvedChannelId = scheduledMessageChannels.getChannelId(selectedEnum);
+            final ScheduledMessageChannel selectedEnum = CHANNEL_NAME_TO_ENUM.get(channelId);
+            final long resolvedChannelId = scheduledMessageChannels.getChannelId(selectedEnum);
 
             event.deferReply().queue();
 
