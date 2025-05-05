@@ -1,17 +1,15 @@
 package greedy.greedybot.application.matching;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import greedy.greedybot.application.matching.dto.MatchingResult;
 import greedy.greedybot.common.exception.GreedyBotException;
-import org.assertj.core.api.Assertions;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class MatchingServiceTest {
     private MatchingService matchingService;
@@ -25,7 +23,7 @@ public class MatchingServiceTest {
     @DisplayName("리뷰어보다 리뷰이가 많을때 매칭 테스트")
     void testMatchStudyMoreReviewees() {
         //given
-        final List<String> reviewees = List.of("리뷰이1", "리뷰이2", "리뷰이3", "리뷰이4") ;
+        final List<String> reviewees = List.of("리뷰이1", "리뷰이2", "리뷰이3", "리뷰이4");
         final List<String> reviewers = List.of("리뷰어1", "리뷰어2");
 
         //when
@@ -43,7 +41,7 @@ public class MatchingServiceTest {
     @DisplayName("리뷰이보다 리뷰어가 많을때 매칭 테스트")
     void testMatchStudyMoreReviewers() {
         //given
-        final List<String> reviewees = List.of("리뷰이1", "리뷰이2") ;
+        final List<String> reviewees = List.of("리뷰이1", "리뷰이2");
         final List<String> reviewers = List.of("리뷰어1", "리뷰어2", "리뷰어3", "리뷰어4");
 
         //when
@@ -59,7 +57,7 @@ public class MatchingServiceTest {
     @DisplayName("리뷰어와 리뷰이가 같을때 매칭 테스트")
     void testMatchStudyDoesNotMatchSamePerson() {
         //given
-        final List<String> reviewees = List.of("태연", "해윤") ;
+        final List<String> reviewees = List.of("태연", "해윤");
         final List<String> reviewers = List.of("태연", "해윤");
 
         //when
