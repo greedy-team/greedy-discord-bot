@@ -45,7 +45,7 @@ public class CustomBillShareListener implements AutoCompleteInteractionListener{
         return Commands.slash(this.getCommandName(), "일반 정산하기!")
                 .addOption(OptionType.STRING, "text", "정산 요청할 멤버들과 각각의 결제 금액을 자유로운 형태로 입력하세요.", true)
                 .addOption(OptionType.STRING, "bank", "정산받을 은행명을 입력해주세요", true, true)
-                .addOption(OptionType.STRING, "accountnumber", "정산받을 계좌번호를 입력해주세요 (숫자만)", true);
+                .addOption(OptionType.STRING, "accountnumber", "정산받을 계좌번호를 입력해주세요 (숫자만 공백없이 입력)", true);
     }
 
     @Override
