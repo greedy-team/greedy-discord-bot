@@ -42,7 +42,7 @@ public class ScheduledCommandListener implements AutoCompleteInteractionListener
             "🍃백엔드-스터디", ScheduledMessageChannel.BACKEND,
             "\uD83E\uDD8B프론트엔드-스터디", ScheduledMessageChannel.FRONT,
             "\uD83E\uDEE7리드-대화", ScheduledMessageChannel.LEAD_CONVERSATION,
-            "tf-discord-test-groud", ScheduledMessageChannel.TEST
+            "tf-discord-test-ground", ScheduledMessageChannel.TEST
     );
 
     private final ScheduledMessageService scheduledMessageService;
