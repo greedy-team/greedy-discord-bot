@@ -46,7 +46,7 @@ public class EqualBillShareListener implements AutoCompleteInteractionListener {
                 .addOption(OptionType.INTEGER, "totalamount", "총 결제 금액을 입력해주세요 (1/n 분할 전 전체 금액)", true)
                 .addOption(OptionType.STRING, "members", "정산 요청할 멤버들을 '@이름' 형태로 입력하세요. 본인은 제외하고 입력해주세요.", true)
                 .addOption(OptionType.STRING, "bank", "정산받을 은행명을 입력해주세요", true, true)
-                .addOption(OptionType.STRING, "accountnumber", "정산받을 계좌번호를 입력해주세요 (숫자만)", true);
+                .addOption(OptionType.STRING, "accountnumber", "정산받을 계좌번호를 입력해주세요 (숫자만 공백없이 입력)", true);
     }
 
     @Override
