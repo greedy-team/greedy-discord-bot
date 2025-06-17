@@ -37,7 +37,7 @@ public class CustomBillShareListener implements AutoCompleteInteractionListener{
 
     @Override
     public String getCommandName() {
-        return "billshare-custom";    // 이름 정하기!!!!!!!!!!!
+        return "billshare-custom";
     }
 
     @Override

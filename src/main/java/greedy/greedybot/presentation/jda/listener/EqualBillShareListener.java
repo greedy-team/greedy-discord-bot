@@ -37,7 +37,7 @@ public class EqualBillShareListener implements AutoCompleteInteractionListener {
 
     @Override
     public String getCommandName() {
-        return "billshare-equal";    // 이름 정하기!!!!!!!!!!!
+        return "billshare-equal";
     }
 
     @Override
