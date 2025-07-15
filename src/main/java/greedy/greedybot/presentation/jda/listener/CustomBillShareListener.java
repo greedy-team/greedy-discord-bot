@@ -18,9 +18,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class CustomBillShareListener implements AutoCompleteInteractionListener{
@@ -91,27 +93,8 @@ public class CustomBillShareListener implements AutoCompleteInteractionListener{
         log.info("[✅ BANK AUTOCOMPLETE SUCCESS]");
     }
 
-    private static final Map<String, BankInfo> BANK_INFO_TO_ENUM = Map.ofEntries(
-            Map.entry("광주은행", BankInfo.GWANGJU),
-            Map.entry("국민은행", BankInfo.KOOKMIN),
-            Map.entry("기업은행", BankInfo.IBK),
-            Map.entry("농협은행", BankInfo.NONGHYUP),
-            Map.entry("대구은행", BankInfo.DAEGU),
-            Map.entry("부산은행", BankInfo.BUSAN),
-            Map.entry("새마을금고", BankInfo.SAEMAEUL),
-            Map.entry("수협은행", BankInfo.SUHYUP),
-            Map.entry("신한은행", BankInfo.SHINHAN),
-            Map.entry("신협", BankInfo.SHINHYEOP),
-            Map.entry("씨티은행", BankInfo.CITI),
-            Map.entry("우리은행", BankInfo.WOORI),
-            Map.entry("우체국", BankInfo.POST),
-            Map.entry("전북은행", BankInfo.JEONBUK),
-            Map.entry("제주은행", BankInfo.JEJU),
-            Map.entry("카카오뱅크", BankInfo.KAKAOBANK),
-            Map.entry("토스뱅크", BankInfo.TOSSBANK),
-            Map.entry("하나은행", BankInfo.HANA),
-            Map.entry("SC제일은행", BankInfo.SC)
-    );
+    private static final Map<String, BankInfo> BANK_INFO_TO_ENUM = Arrays.stream(BankInfo.values())
+            .collect(Collectors.toMap(BankInfo::getBankName, bankInfo -> bankInfo));
 
     private void validateAllowedChannel(final @NotNull SlashCommandInteractionEvent event) {
         if (event.getChannel().getIdLong() != allowedChannelId) {
