@@ -38,13 +38,12 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
             "BE-2기: 원태연, 백경환, 송은우, 조승현, 정다빈, 신동훈",
             "FE-2기: 김범수, 김의천, 송혜정, 김민석"
     );
+    private static final String REMATCH_BUTTON_ID = "rematch";
+    private static final String CONFIRM_BUTTON_ID = "matching-confirm";
     private static final Map<String, List<String>> reviewerSessions = new ConcurrentHashMap<>();
     private static final Map<String, List<String>> revieweeSessions = new ConcurrentHashMap<>();
     private static final Map<String, String> missionNameSession = new ConcurrentHashMap<>();
     private static final Map<String, String> resultSessions = new ConcurrentHashMap<>();
-    private static final String REMATCH_BUTTON_ID = "rematch";
-    private static final String CONFIRM_BUTTON_ID = "matching-confirm";
-
 
     private final MatchingService matchingService;
 
