@@ -116,7 +116,8 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
 
         log.info("[START MATCHING] : {}", mission);
         final MatchingResult matchingResultAnnouncement = matchingService.matchStudy(reviewees, reviewers);
-        final String result = "[**" + mission + "** 리뷰어 매칭 결과]\n\n" + matchingResultAnnouncement.toDiscordAnnouncement();
+        final String result =
+                "[**" + mission + "** 리뷰어 매칭 결과]\n\n" + matchingResultAnnouncement.toDiscordAnnouncement();
         resultSessions.put(matchSessionId, result);
         return result;
     }
@@ -205,12 +206,10 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
         if (buttonId.equals(REMATCH_BUTTON_ID)) {
             log.info("[RETRY MATCHING]");
             final String result = match(matchSessionId);
-            event.editMessage(result)
-                    .setActionRow(
-                            Button.primary(REMATCH_BUTTON_ID + ":" + matchSessionId, "\n🔄 재시도"),
-                            Button.success(CONFIRM_BUTTON_ID + ":" + matchSessionId, "✅ 확정")
-                    )
-                    .queue();
+            event.editMessage(result).setActionRow(
+                    Button.primary(REMATCH_BUTTON_ID + ":" + matchSessionId, "🔄 재시도"),
+                    Button.success(CONFIRM_BUTTON_ID + ":" + matchSessionId, "✅ 확정")
+            ).queue();
             resultSessions.put(matchSessionId, result);
             return;
         }
@@ -222,16 +221,20 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
                 log.warn("[RESULT SESSION NOT FOUND]");
                 event.reply("❌ 리뷰어 리뷰이 매칭 결과가 존재하지 않습니다. 다시 시도해주세요.").setEphemeral(true).queue();
             }
-            reviewerSessions.remove(matchSessionId);
-            revieweeSessions.remove(matchSessionId);
-            missionNameSession.remove(matchSessionId);
-            resultSessions.remove(matchSessionId);
 
+            clearSession(matchSessionId);
             event.getChannel().sendMessage(result).queue();
             return;
         }
 
         log.warn("[UNSUPPORTED BUTTON COMMAND]: {}", buttonId);
+    }
+
+    private void clearSession(final String matchSessionId) {
+        reviewerSessions.remove(matchSessionId);
+        revieweeSessions.remove(matchSessionId);
+        missionNameSession.remove(matchSessionId);
+        resultSessions.remove(matchSessionId);
     }
 
     @Override

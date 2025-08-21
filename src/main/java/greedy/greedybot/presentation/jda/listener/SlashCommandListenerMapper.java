@@ -3,6 +3,7 @@ package greedy.greedybot.presentation.jda.listener;
 import greedy.greedybot.common.exception.GreedyBotException;
 import greedy.greedybot.presentation.jda.role.DiscordRole;
 import greedy.greedybot.presentation.jda.role.DiscordRoles;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -76,16 +77,20 @@ public class SlashCommandListenerMapper extends ListenerAdapter {
         final String buttonComponentId = event.getComponentId();
         log.info("[RECEIVED DISCORD BUTTON COMMAND] : {}", buttonComponentId);
 
-        final InCommandButtonInteractionListener buttonListener = slashCommandListenersByCommandName.values().stream()
+        final List<InCommandButtonInteractionListener> buttonListeners = slashCommandListenersByCommandName.values().stream()
                 .filter(listener -> listener instanceof InCommandButtonInteractionListener)
                 .map(listener -> (InCommandButtonInteractionListener) listener)
                 .filter(listener -> listener.isSupportingButtonId(buttonComponentId))
-                .findFirst()
-                .orElseThrow(() -> {
-                    log.warn("[UNSUPPORTED BUTTON COMMAND]: {}", buttonComponentId);
-                    return new GreedyBotException("❌ 지원하지 않는 버튼입니다: " + buttonComponentId);
-                });
+                .toList();
 
+        if (buttonListeners.size() != 1) { // 두개 이상, 또는 없는 경우
+            log.warn("[MULTIPLE BUTTON COMMANDS FOUND]: {}", buttonComponentId);
+            event.reply("❌ 지원하지 않는 버튼입니다: " + buttonComponentId)
+                    .setEphemeral(true)
+                    .queue();
+        }
+
+        final InCommandButtonInteractionListener buttonListener = buttonListeners.getFirst();
         buttonListener.onButtonInteraction(event);
     }
 }
