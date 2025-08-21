@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -68,5 +69,23 @@ public class SlashCommandListenerMapper extends ListenerAdapter {
         if (slashCommand instanceof AutoCompleteInteractionListener autoCompleteInteractionListener) {
             autoCompleteInteractionListener.onCommandAutoCompleteInteraction(event);
         }
+    }
+
+    @Override
+    public void onButtonInteraction(@NotNull final ButtonInteractionEvent event) {
+        final String buttonComponentId = event.getComponentId();
+        log.info("[RECEIVED DISCORD BUTTON COMMAND] : {}", buttonComponentId);
+
+        final InCommandButtonInteractionListener buttonListener = slashCommandListenersByCommandName.values().stream()
+                .filter(listener -> listener instanceof InCommandButtonInteractionListener)
+                .map(listener -> (InCommandButtonInteractionListener) listener)
+                .filter(listener -> listener.isSupportingButtonId(buttonComponentId))
+                .findFirst()
+                .orElseThrow(() -> {
+                    log.warn("[UNSUPPORTED BUTTON COMMAND]: {}", buttonComponentId);
+                    return new GreedyBotException("❌ 지원하지 않는 버튼입니다: " + buttonComponentId);
+                });
+
+        buttonListener.onButtonInteraction(event);
     }
 }

@@ -6,23 +6,28 @@ import greedy.greedybot.common.exception.GreedyBotException;
 import greedy.greedybot.presentation.jda.role.DiscordRole;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ReviewMatchListener implements AutoCompleteInteractionListener {
+public class ReviewMatchListener implements AutoCompleteInteractionListener, InCommandButtonInteractionListener {
 
     private static final Logger log = LoggerFactory.getLogger(ReviewMatchListener.class);
     private static final List<String> reviewees = List.of(
@@ -33,10 +38,15 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
             "BE-2기: 원태연, 백경환, 송은우, 조승현, 정다빈, 신동훈",
             "FE-2기: 김범수, 김의천, 송혜정, 김민석"
     );
+    private static final Map<String, List<String>> reviewerSessions = new ConcurrentHashMap<>();
+    private static final Map<String, List<String>> revieweeSessions = new ConcurrentHashMap<>();
+    private static final Map<String, String> missionNameSession = new ConcurrentHashMap<>();
+    private static final Map<String, String> resultSessions = new ConcurrentHashMap<>();
+    private static final String REMATCH_BUTTON_ID = "rematch";
+    private static final String CONFIRM_BUTTON_ID = "matching-confirm";
 
 
     private final MatchingService matchingService;
-
 
     public ReviewMatchListener(
             final MatchingService matchingService
@@ -74,18 +84,41 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
 
         validateReviewerAndRevieweeType(revieweeType, reviewerType);
 
-        event.deferReply().queue();
+        event.deferReply().setEphemeral(true).queue();
         log.info("[SUCCESS TO GET EVENT]");
-
         final List<String> reviewees = extractNamesFromRawString(revieweesRawString);
         final List<String> reviewers = extractNamesFromRawString(reviewersRawString);
 
-        MatchingResult matchingResultAnnouncement = matchingService.matchStudy(reviewees, reviewers);
+        final String matchSessionId = UUID.randomUUID().toString().substring(0, 8);
+        missionNameSession.put(matchSessionId, mission);
+        reviewerSessions.put(matchSessionId, reviewers);
+        revieweeSessions.put(matchSessionId, reviewees);
+        log.info("[MATCHING SESSIONS SAVED] : {}", matchSessionId);
 
-        log.info("[MATCH SUCCESS]");
+        final String result = match(matchSessionId);
+        event.getHook().sendMessage(result)
+                .setEphemeral(true)
+                .addActionRow(
+                        Button.primary(REMATCH_BUTTON_ID + ":" + matchSessionId, "\n🔄 재시도"),
+                        Button.success(CONFIRM_BUTTON_ID + ":" + matchSessionId, "✅ 확정")
+                )
+                .queue();
+    }
 
-        String message = "[**" + mission + "** 리뷰어 매칭 결과]\n\n" + matchingResultAnnouncement.toDiscordAnnouncement();
-        event.getHook().sendMessage(message).queue();
+    private String match(final String matchSessionId) {
+        final String mission = missionNameSession.get(matchSessionId);
+        final List<String> reviewees = revieweeSessions.get(matchSessionId);
+        final List<String> reviewers = reviewerSessions.get(matchSessionId);
+        if (Objects.isNull(reviewees) || Objects.isNull(reviewers) || mission.isBlank()) {
+            log.warn("[REVIEWER OR REVIEWEE SESSIONS NOT FOUND]");
+            throw new GreedyBotException("\uD83D\uDEAB 리뷰어 또는 리뷰이 세션이 존재하지 않습니다. 다시 시도해주세요.");
+        }
+
+        log.info("[START MATCHING] : {}", mission);
+        final MatchingResult matchingResultAnnouncement = matchingService.matchStudy(reviewees, reviewers);
+        final String result = "[**" + mission + "** 리뷰어 매칭 결과]\n\n" + matchingResultAnnouncement.toDiscordAnnouncement();
+        resultSessions.put(matchSessionId, result);
+        return result;
     }
 
     @Override
@@ -161,5 +194,48 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener {
 
     private String getStudyType(final String groupInfo) {
         return groupInfo.split(":")[0];
+    }
+
+    @Override
+    public void onButtonInteraction(final ButtonInteractionEvent event) {
+        final String[] buttonIdAndMatchSessionId = event.getComponentId().split(":");
+        final String buttonId = buttonIdAndMatchSessionId[0];
+        final String matchSessionId = buttonIdAndMatchSessionId[1];
+
+        if (buttonId.equals(REMATCH_BUTTON_ID)) {
+            log.info("[RETRY MATCHING]");
+            final String result = match(matchSessionId);
+            event.editMessage(result)
+                    .setActionRow(
+                            Button.primary(REMATCH_BUTTON_ID + ":" + matchSessionId, "\n🔄 재시도"),
+                            Button.success(CONFIRM_BUTTON_ID + ":" + matchSessionId, "✅ 확정")
+                    )
+                    .queue();
+            resultSessions.put(matchSessionId, result);
+            return;
+        }
+
+        if (buttonId.equals(CONFIRM_BUTTON_ID)) {
+            log.info("[CONFIRM MATCHING]");
+            final String result = resultSessions.get(matchSessionId);
+            if (Objects.isNull(result)) {
+                log.warn("[RESULT SESSION NOT FOUND]");
+                event.reply("❌ 리뷰어 리뷰이 매칭 결과가 존재하지 않습니다. 다시 시도해주세요.").setEphemeral(true).queue();
+            }
+            reviewerSessions.remove(matchSessionId);
+            revieweeSessions.remove(matchSessionId);
+            missionNameSession.remove(matchSessionId);
+            resultSessions.remove(matchSessionId);
+
+            event.getChannel().sendMessage(result).queue();
+            return;
+        }
+
+        log.warn("[UNSUPPORTED BUTTON COMMAND]: {}", buttonId);
+    }
+
+    @Override
+    public boolean isSupportingButtonId(String buttonId) {
+        return buttonId.startsWith(REMATCH_BUTTON_ID) || buttonId.startsWith(CONFIRM_BUTTON_ID);
     }
 }
