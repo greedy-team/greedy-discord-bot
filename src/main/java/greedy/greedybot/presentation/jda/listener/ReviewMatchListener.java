@@ -220,7 +220,9 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
                 log.warn("[RESULT SESSION NOT FOUND]");
                 event.reply("❌ 리뷰어 리뷰이 매칭 결과가 존재하지 않습니다. 다시 시도해주세요.").setEphemeral(true).queue();
             }
-
+            event.editMessage("✅ **매칭 확정!**\n결과를 채널에 공개적으로 전송했습니다.")
+                    .setComponents()
+                    .queue();
             clearSession(matchSessionId);
             event.getChannel().sendMessage(result).queue();
             return;
