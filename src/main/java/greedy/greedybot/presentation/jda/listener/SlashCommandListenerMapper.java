@@ -3,11 +3,13 @@ package greedy.greedybot.presentation.jda.listener;
 import greedy.greedybot.common.exception.GreedyBotException;
 import greedy.greedybot.presentation.jda.role.DiscordRole;
 import greedy.greedybot.presentation.jda.role.DiscordRoles;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -68,5 +70,27 @@ public class SlashCommandListenerMapper extends ListenerAdapter {
         if (slashCommand instanceof AutoCompleteInteractionListener autoCompleteInteractionListener) {
             autoCompleteInteractionListener.onCommandAutoCompleteInteraction(event);
         }
+    }
+
+    @Override
+    public void onButtonInteraction(@NotNull final ButtonInteractionEvent event) {
+        final String buttonComponentId = event.getComponentId();
+        log.info("[RECEIVED DISCORD BUTTON COMMAND] : {}", buttonComponentId);
+
+        final List<InCommandButtonInteractionListener> buttonListeners = slashCommandListenersByCommandName.values().stream()
+                .filter(listener -> listener instanceof InCommandButtonInteractionListener)
+                .map(listener -> (InCommandButtonInteractionListener) listener)
+                .filter(listener -> listener.isSupportingButtonId(buttonComponentId))
+                .toList();
+
+        if (buttonListeners.size() != 1) { // 두개 이상, 또는 없는 경우
+            log.warn("[MULTIPLE BUTTON COMMANDS FOUND]: {}", buttonComponentId);
+            event.reply("❌ 지원하지 않는 버튼입니다: " + buttonComponentId)
+                    .setEphemeral(true)
+                    .queue();
+        }
+
+        final InCommandButtonInteractionListener buttonListener = buttonListeners.getFirst();
+        buttonListener.onButtonInteraction(event);
     }
 }
