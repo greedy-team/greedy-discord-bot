@@ -31,12 +31,12 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
 
     private static final Logger log = LoggerFactory.getLogger(ReviewMatchListener.class);
     private static final List<String> reviewees = List.of(
-            "BE-2기: 김지우, 이창희, 황혜림, 전서희, 허석준, 염지환",
-            "FE-2기: 강동현, 신지훈, 신지우, 박찬빈, 임규영, 정창우"
+            "BE-3기: 이고은, 김하늘, 하수한, 강동현, 서현진, 김태우",
+            "FE-3기: 강건, 심혁, 윤재홍, 강예령"
     );
     private static final List<String> reviewers = List.of(
-            "BE-2기: 원태연, 백경환, 송은우, 조승현, 정다빈, 신동훈",
-            "FE-2기: 김범수, 김의천, 송혜정, 김민석"
+            "BE-3기: 백경환, 정다빈, 남해윤, 김준수, 신혜빈, 신지훈, 정상희", // ,조승현,
+            "FE-3기: 김민석, 정수영, 김의천, 최혜령"
     );
     private static final String REMATCH_BUTTON_ID = "rematch";
     private static final String CONFIRM_BUTTON_ID = "matching-confirm";
