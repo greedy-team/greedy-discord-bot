@@ -35,7 +35,7 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
             "FE-3기: 강건, 심혁, 윤재홍, 강예령"
     );
     private static final List<String> reviewers = List.of(
-            "BE-3기: 백경환, 정다빈, 남해윤, 김준수, 신혜빈, 신지훈, 정상희, 조승현",
+            "BE-3기: 백경환, 정다빈, 남해윤, 김준수, 신혜빈, 정상희, 조승현",
             "FE-3기: 김민석, 정수영, 김의천, 최혜령"
     );
     private static final String REMATCH_BUTTON_ID = "rematch";
