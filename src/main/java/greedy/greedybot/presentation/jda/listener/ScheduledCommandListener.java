@@ -58,7 +58,7 @@ public class ScheduledCommandListener implements AutoCompleteInteractionListener
 
     @Override
     public String getCommandName() {
-        return "add-scheduled-message";
+        return "scheduled-message";
     }
 
     @Override
