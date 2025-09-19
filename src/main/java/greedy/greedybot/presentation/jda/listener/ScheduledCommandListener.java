@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
@@ -42,7 +44,9 @@ public class ScheduledCommandListener implements AutoCompleteInteractionListener
 
     @Override
     public SlashCommandData getCommandData() {
-        return Commands.slash("scheduled-message", "Schedule a message");
+        return Commands.slash("scheduled-message", "예약 메세지 등록")
+            .addOption(OptionType.STRING, "member", "멘션할 멤버나 그룹이 있다면, 엔터 대신 Space(띄어쓰기)로 구분해 입력하세요. \n"
+                + "사용자는 @이름 형태로 입력하세요.", false);
     }
 
     @Override
@@ -50,8 +54,19 @@ public class ScheduledCommandListener implements AutoCompleteInteractionListener
         try {
             validateAllowedChannel(event);
 
+            String mentionRaw = null;
+            OptionMapping memberOption = event.getOption("member");
+            if (memberOption != null) {
+                mentionRaw = memberOption.getAsString();
+            }
+
+            String selectMenuId = "scheduled-channel-select";
+            if (mentionRaw != null && !mentionRaw.isEmpty()) {
+                selectMenuId += ":" + mentionRaw;
+            }
+
             // 채널 선택 드롭다운 생성
-            StringSelectMenu.Builder channelMenu = StringSelectMenu.create("scheduled-channel-modal")
+            StringSelectMenu.Builder channelMenu = StringSelectMenu.create(selectMenuId)
                 .setPlaceholder("메시지를 보낼 채널을 선택하세요");
 
             CHANNEL_NAME_TO_ENUM.forEach((name, enumValue) -> {
