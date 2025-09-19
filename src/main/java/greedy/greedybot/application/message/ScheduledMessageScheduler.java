@@ -47,7 +47,12 @@ public class ScheduledMessageScheduler {
             return;
         }
 
-        channel.sendMessage(scheduledMessage.getContent()).queue();
+        String parsedContent = scheduledMessage.getContent()
+            .replaceAll("`<", "<")   // 맨 앞 백틱 제거
+            .replaceAll(">`", ">");   // 맨 뒤 백틱 제거
+
+        channel.sendMessage(parsedContent).queue();
+
         log.info("📢 예약된 메시지가 Discord 채널({})에 전송됨: {}", scheduledMessage.getChannelId(), scheduledMessage.getContent());
     }
 }
