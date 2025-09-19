@@ -35,9 +35,12 @@ public class ScheduledModalListener extends ListenerAdapter {
     @Override
     public void onModalInteraction(@NotNull ModalInteractionEvent event) {
         try {
-            String[] parts = event.getModalId().split(":", 2);
+            String[] parts = event.getModalId().split(":", 3);
+
             final ScheduledMessageChannel channelEnum = ScheduledMessageChannel.valueOf(parts[1]);
             final long resolvedChannelId = scheduledMessageChannels.getChannelId(channelEnum);
+
+            String mebers = (parts.length > 2) ? parts[2] : null;
 
             final String message = event.getValue("message").getAsString();
             final String timeString = event.getValue("time").getAsString();
@@ -46,8 +49,13 @@ public class ScheduledModalListener extends ListenerAdapter {
             LocalDateTime time = parseScheduledTime(timeString); //형식 검증
             isValidScheduledTime(time); //과거 시간 입력 검증
 
+            String finalMessage = message;
+            if (mebers != null && !mebers.isEmpty()) {
+                finalMessage = "`" + mebers + "`" + "\n" + message;
+            }
+
             final ScheduledMessage scheduledMessage = new ScheduledMessage(
-                message,
+                finalMessage,
                 time,
                 event.getUser().getId(),
                 String.valueOf(resolvedChannelId)
