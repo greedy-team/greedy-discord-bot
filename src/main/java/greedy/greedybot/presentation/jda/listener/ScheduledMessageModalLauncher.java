@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ScheduledMessageSelectListener extends ListenerAdapter {
+public class ScheduledMessageModalLauncher extends ListenerAdapter {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm",
         Locale.ENGLISH);

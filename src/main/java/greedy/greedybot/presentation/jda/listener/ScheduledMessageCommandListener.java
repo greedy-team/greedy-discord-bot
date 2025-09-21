@@ -22,9 +22,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ScheduledCommandListener implements AutoCompleteInteractionListener {
+public class ScheduledMessageCommandListener implements AutoCompleteInteractionListener {
 
-    private static final Logger log = LoggerFactory.getLogger(ScheduledCommandListener.class);
+    private static final Logger log = LoggerFactory.getLogger(ScheduledMessageCommandListener.class);
 
     private static final Map<String, ScheduledMessageChannel> CHANNEL_NAME_TO_ENUM = Map.of(
         "🚀공통-자유", ScheduledMessageChannel.NOTICE,

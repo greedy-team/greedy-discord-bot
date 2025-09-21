@@ -17,16 +17,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ScheduledModalListener extends ListenerAdapter {
+public class ScheduledMessageSubmitListener extends ListenerAdapter {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm",
         Locale.ENGLISH);
 
     private final ScheduledMessageService scheduledMessageService;
     private final ScheduledMessageChannels scheduledMessageChannels;
-    private static final Logger log = LoggerFactory.getLogger(ScheduledModalListener.class);
+    private static final Logger log = LoggerFactory.getLogger(ScheduledMessageSubmitListener.class);
 
-    public ScheduledModalListener(ScheduledMessageService scheduledMessageService,
+    public ScheduledMessageSubmitListener(ScheduledMessageService scheduledMessageService,
         ScheduledMessageChannels scheduledMessageChannels) {
         this.scheduledMessageService = scheduledMessageService;
         this.scheduledMessageChannels = scheduledMessageChannels;
