@@ -21,7 +21,7 @@ public class ScheduledMessageSelectListener extends ListenerAdapter {
     public void onStringSelectInteraction(@NotNull StringSelectInteractionEvent event) {
         String[] parts = event.getComponentId().split(":", 2);
         String componentId = parts[0];
-        String mentionRaw = (parts.length > 1) ? parts[1] : null;
+        String members = (parts.length > 1) ? parts[1] : null;
 
         if (!componentId.equals("scheduled-channel-select")) {
             return;
@@ -40,8 +40,8 @@ public class ScheduledMessageSelectListener extends ListenerAdapter {
         final String channelId = event.getValues().get(0);
 
         String modalId = "scheduled-message-modal:" + channelId;
-        if (mentionRaw != null && !mentionRaw.isEmpty()) {
-            modalId += ":" + mentionRaw;
+        if (members != null && !members.isEmpty()) {
+            modalId += ":" + members;
         }
 
         Modal modal = Modal.create(modalId, "예약 메시지 등록")
