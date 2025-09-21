@@ -54,15 +54,15 @@ public class ScheduledCommandListener implements AutoCompleteInteractionListener
         try {
             validateAllowedChannel(event);
 
-            String mentionRaw = null;
+            String members = null;
             OptionMapping memberOption = event.getOption("member");
             if (memberOption != null) {
-                mentionRaw = memberOption.getAsString();
+                members = memberOption.getAsString();
             }
 
             String selectMenuId = "scheduled-channel-select";
-            if (mentionRaw != null && !mentionRaw.isEmpty()) {
-                selectMenuId += ":" + mentionRaw;
+            if (members != null && !members.isEmpty()) {
+                selectMenuId += ":" + members;
             }
 
             // 채널 선택 드롭다운 생성
