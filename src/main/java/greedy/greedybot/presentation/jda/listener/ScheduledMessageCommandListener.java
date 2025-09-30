@@ -3,13 +3,9 @@ package greedy.greedybot.presentation.jda.listener;
 import greedy.greedybot.common.exception.GreedyBotException;
 import greedy.greedybot.presentation.jda.role.DiscordRole;
 import greedy.greedybot.presentation.jda.role.ScheduledMessageChannel;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -22,7 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ScheduledMessageCommandListener implements AutoCompleteInteractionListener {
+public class ScheduledMessageCommandListener implements SlashCommandListener {
 
     private static final Logger log = LoggerFactory.getLogger(ScheduledMessageCommandListener.class);
 
@@ -81,17 +77,6 @@ public class ScheduledMessageCommandListener implements AutoCompleteInteractionL
             log.error(e.getMessage());
             event.reply(e.getMessage()).setEphemeral(true).queue();
         }
-    }
-
-    @Override
-    public void onCommandAutoCompleteInteraction(@NotNull final CommandAutoCompleteInteractionEvent event) {
-        List<Command.Choice> options = CHANNEL_NAME_TO_ENUM.keySet().stream()
-            .filter(name -> name.startsWith(event.getFocusedOption().getValue()))
-            .map(name -> new Command.Choice(name, name))
-            .collect(Collectors.toList());
-
-        event.replyChoices(options).queue();
-        log.info("[SUCCESS TO GET RECEIVING CHANNEL]");
     }
 
     private void validateAllowedChannel(final @NotNull SlashCommandInteractionEvent event) {
