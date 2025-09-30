@@ -37,10 +37,11 @@ public class ScheduledMessageSubmitListener extends ListenerAdapter {
         try {
             String[] parts = event.getModalId().split(":", 3);
 
-            final ScheduledMessageChannel channelEnum = ScheduledMessageChannel.valueOf(parts[1]);
-            final long resolvedChannelId = scheduledMessageChannels.getChannelId(channelEnum);
+            String channelString = parts[1];
+            String members = (parts.length > 2) ? parts[2] : null;
 
-            String mebers = (parts.length > 2) ? parts[2] : null;
+            final ScheduledMessageChannel channelEnum = ScheduledMessageChannel.valueOf(channelString);
+            final long resolvedChannelId = scheduledMessageChannels.getChannelId(channelEnum);
 
             final String message = event.getValue("message").getAsString();
             final String timeString = event.getValue("time").getAsString();
@@ -50,8 +51,8 @@ public class ScheduledMessageSubmitListener extends ListenerAdapter {
             isValidScheduledTime(time); //과거 시간 입력 검증
 
             String finalMessage = message;
-            if (mebers != null && !mebers.isEmpty()) {
-                finalMessage = "`" + mebers + "`" + "\n" + message;
+            if (members != null && !members.isEmpty()) {
+                finalMessage = "`" + members + "`" + "\n" + message;
             }
 
             final ScheduledMessage scheduledMessage = new ScheduledMessage(
