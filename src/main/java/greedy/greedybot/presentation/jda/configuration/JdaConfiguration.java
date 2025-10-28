@@ -1,5 +1,7 @@
 package greedy.greedybot.presentation.jda.configuration;
 
+import greedy.greedybot.presentation.jda.listener.ScheduledMessageModalLauncher;
+import greedy.greedybot.presentation.jda.listener.ScheduledMessageSubmitListener;
 import greedy.greedybot.presentation.jda.listener.SlashCommandListenerMapper;
 import java.util.EnumSet;
 import net.dv8tion.jda.api.JDA;
@@ -17,6 +19,9 @@ import org.springframework.context.annotation.Configuration;
 public class JdaConfiguration {
 
     private final SlashCommandListenerMapper slashCommandListenerMapper;
+    private final ScheduledMessageModalLauncher scheduledMessageModalLauncher;
+    private final ScheduledMessageSubmitListener scheduledMessageSubmitListener;
+
     @Value("${discord.token}")
     private String token;
     @Value("${discord.guild_id}")
@@ -26,8 +31,12 @@ public class JdaConfiguration {
     @Value("${discord.scheduled_message_channel_id}")
     private String scheduledMessageChannelId;
 
-    public JdaConfiguration(final SlashCommandListenerMapper slashCommandListenerMapper) {
+    public JdaConfiguration(SlashCommandListenerMapper slashCommandListenerMapper,
+        ScheduledMessageModalLauncher scheduledMessageModalLauncher,
+        ScheduledMessageSubmitListener scheduledMessageSubmitListener) {
         this.slashCommandListenerMapper = slashCommandListenerMapper;
+        this.scheduledMessageModalLauncher = scheduledMessageModalLauncher;
+        this.scheduledMessageSubmitListener = scheduledMessageSubmitListener;
     }
 
     @Bean
@@ -43,7 +52,10 @@ public class JdaConfiguration {
         return JDABuilder.createLight(token)
                 .setActivity(Activity.listening("메세지 입력"))
                 .setStatus(OnlineStatus.ONLINE)
-                .addEventListeners(slashCommandListenerMapper)
+                .addEventListeners( // 수동 입력
+                    slashCommandListenerMapper,
+                    scheduledMessageSubmitListener
+                )
                 .enableIntents(intents)
                 .build()
                 .awaitReady(); // https://ci.dv8tion.net/job/JDA/javadoc/net/dv8tion/jda/api/JDABuilder.html#build()
