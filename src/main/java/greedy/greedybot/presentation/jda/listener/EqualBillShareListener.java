@@ -6,6 +6,11 @@ import greedy.greedybot.common.exception.GreedyBotException;
 import greedy.greedybot.domain.billshare.BankInfo;
 import greedy.greedybot.domain.billshare.EqualBillShare;
 import greedy.greedybot.presentation.jda.role.DiscordRole;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -17,12 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 public class EqualBillShareListener implements AutoCompleteInteractionListener {
@@ -45,10 +44,10 @@ public class EqualBillShareListener implements AutoCompleteInteractionListener {
     @Override
     public SlashCommandData getCommandData() {
         return Commands.slash(this.getCommandName(), "n분의 1 정산하기!")
-                .addOption(OptionType.INTEGER, "totalamount", "총 결제 금액을 입력해주세요 (1/n 분할 전 전체 금액)", true)
-                .addOption(OptionType.STRING, "members", "정산 요청할 멤버들을 '@이름' 형태로 입력하세요. 본인은 제외하고 입력해주세요.", true)
-                .addOption(OptionType.STRING, "bank", "정산받을 은행명을 입력해주세요", true, true)
-                .addOption(OptionType.STRING, "accountnumber", "정산받을 계좌번호를 입력해주세요 (숫자만 공백없이 입력)", true);
+            .addOption(OptionType.INTEGER, "totalamount", "총 결제 금액을 입력해주세요 (1/n 분할 전 전체 금액)", true)
+            .addOption(OptionType.STRING, "members", "정산 요청할 멤버들을 '@이름' 형태로 입력하세요. 본인은 제외하고 입력해주세요.", true)
+            .addOption(OptionType.STRING, "bank", "정산받을 은행명을 입력해주세요", true, true)
+            .addOption(OptionType.STRING, "accountnumber", "정산받을 계좌번호를 입력해주세요 (숫자만 공백없이 입력)", true);
     }
 
     @Override
@@ -69,11 +68,11 @@ public class EqualBillShareListener implements AutoCompleteInteractionListener {
         int memberCount = memberName.split("\\s+").length;
 
         final EqualBillShare equalBillShare = new EqualBillShare(
-                memberCount,
-                totalAmount,
-                bankInfo,
-                accountNumber,
-                memberName
+            memberCount,
+            totalAmount,
+            bankInfo,
+            accountNumber,
+            memberName
         );
         log.info("✅ 메시지가 전송되었습니다.");
 
@@ -89,16 +88,16 @@ public class EqualBillShareListener implements AutoCompleteInteractionListener {
         }
 
         List<Command.Choice> choices = BANK_INFO_TO_ENUM.keySet().stream()
-                .filter(name -> name.startsWith(event.getFocusedOption().getValue()))
-                .map(name -> new Command.Choice(name, name))
-                .toList();
+            .filter(name -> name.startsWith(event.getFocusedOption().getValue()))
+            .map(name -> new Command.Choice(name, name))
+            .toList();
 
         event.replyChoices(choices).queue();
         log.info("[✅ BANK AUTOCOMPLETE SUCCESS]");
     }
 
     private static final Map<String, BankInfo> BANK_INFO_TO_ENUM = Arrays.stream(BankInfo.values())
-            .collect(Collectors.toMap(BankInfo::getBankName, bankInfo -> bankInfo));
+        .collect(Collectors.toMap(BankInfo::getBankName, bankInfo -> bankInfo));
 
     private void validateAllowedChannel(final @NotNull SlashCommandInteractionEvent event) {
         if (event.getChannel().getIdLong() != allowedChannelId) {

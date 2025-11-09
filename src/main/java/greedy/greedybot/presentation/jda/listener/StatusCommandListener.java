@@ -24,9 +24,9 @@ public class StatusCommandListener implements SlashCommandListener {
     @Override
     public SlashCommandData getCommandData() {
         return Commands.slash(this.getCommandName(), "Check the status of the bot")
-                .addOption(OptionType.STRING, "ping", "Ping the bot")
-                .addOption(OptionType.STRING, "ok", "Check the status of the bot")
-                .addOption(OptionType.STRING, "hello", "Hello the bot");
+            .addOption(OptionType.STRING, "ping", "Ping the bot")
+            .addOption(OptionType.STRING, "ok", "Check the status of the bot")
+            .addOption(OptionType.STRING, "hello", "Hello the bot");
     }
 
     @Override

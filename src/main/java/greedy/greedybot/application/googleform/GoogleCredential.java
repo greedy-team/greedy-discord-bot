@@ -1,7 +1,6 @@
 package greedy.greedybot.application.googleform;
 
 import com.google.auth.oauth2.GoogleCredentials;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -22,8 +21,8 @@ public class GoogleCredential {
         try {
             InputStream credentialsStream = new ClassPathResource(SERVICE_ACCOUNT_PATH).getInputStream();
             final GoogleCredentials credentials = GoogleCredentials
-                    .fromStream(credentialsStream)
-                    .createScoped(Collections.singleton(FORMS_SCOPE));
+                .fromStream(credentialsStream)
+                .createScoped(Collections.singleton(FORMS_SCOPE));
 
             credentials.refreshIfExpired();
             return credentials.getAccessToken().getTokenValue();

@@ -49,9 +49,9 @@ public class FortuneTodayCommandListener implements SlashCommandListener {
         event.deferReply().queue();
         final String result = fortuneService.findTodayFortuneByKey(userId, today);
         event.getHook().sendMessage("""
-                **%s**님의 오늘의 운세!
-                %s
-                """.formatted(nickname, result)).queue();
+            **%s**님의 오늘의 운세!
+            %s
+            """.formatted(nickname, result)).queue();
     }
 
     private void validateAllowedChannel(final @NotNull SlashCommandInteractionEvent event) {

@@ -6,20 +6,21 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BillShareService {
+
     public EqualBillShareResponse equalBillShare(EqualBillShare request) {
         String bankName = request.getBankInfo().getBankName();
         String account = request.getAccountNumber();
         String fullAccount = bankName + " " + account;
 
         String paymentLink = "supertoss://send?bankCode=%s&accountNo=%s"
-                .formatted(request.getBankInfo().getBankCode(), account);
+            .formatted(request.getBankInfo().getBankCode(), account);
 
         return new EqualBillShareResponse(
-                request.getTotalAmount(),
-                request.getMemberCount(),
-                paymentLink,
-                fullAccount,
-                request.getMemberName()
+            request.getTotalAmount(),
+            request.getMemberCount(),
+            paymentLink,
+            fullAccount,
+            request.getMemberName()
         );
     }
 
@@ -29,12 +30,12 @@ public class BillShareService {
         String fullAccount = bankName + " " + account;
 
         String paymentLink = "supertoss://send?bankCode=%s&accountNo=%s"
-                .formatted(request.getBankInfo().getBankCode(), account);
+            .formatted(request.getBankInfo().getBankCode(), account);
 
         return new CustomBillShareResponse(
-                request.getText(),
-                paymentLink,
-                fullAccount
+            request.getText(),
+            paymentLink,
+            fullAccount
         );
     }
 }

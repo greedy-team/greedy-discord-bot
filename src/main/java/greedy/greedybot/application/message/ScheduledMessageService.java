@@ -13,7 +13,7 @@ public class ScheduledMessageService {
         this.scheduledMessageRepository = repository;
     }
 
-    public void scheduleMessage(ScheduledMessage message){
+    public void scheduleMessage(ScheduledMessage message) {
         scheduledMessageRepository.saveScheduledMessage(message);
     }
 }

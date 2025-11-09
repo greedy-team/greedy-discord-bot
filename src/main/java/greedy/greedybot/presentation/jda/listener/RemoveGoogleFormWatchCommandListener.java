@@ -34,9 +34,9 @@ public class RemoveGoogleFormWatchCommandListener implements SlashCommandListene
     @Override
     public SlashCommandData getCommandData() {
         return Commands.slash(this.getCommandName(), "Delete google form watch")
-                .addOption(OptionType.STRING, FORM_ID_KEY, """
-                        Google form id where it is https://docs.google.com/forms/d/{formId}
-                        """);
+            .addOption(OptionType.STRING, FORM_ID_KEY, """
+                Google form id where it is https://docs.google.com/forms/d/{formId}
+                """);
     }
 
     @Override
@@ -54,8 +54,8 @@ public class RemoveGoogleFormWatchCommandListener implements SlashCommandListene
         final String removeFormWatchTitle = googleFormService.removeFormWatch(formId);
         log.info("[DELETE FORM WATCH]: {}", removeFormWatchTitle);
         event.getHook().sendMessage("""
-                ✅ %s 구글폼 구독을 해제했습니다.
-                """.formatted(removeFormWatchTitle)).queue();
+            ✅ %s 구글폼 구독을 해제했습니다.
+            """.formatted(removeFormWatchTitle)).queue();
     }
 
     @Override

@@ -1,8 +1,7 @@
 package greedy.greedybot.application.billshare;
 
-import greedy.greedybot.domain.billshare.BankInfo;
+public class CustomBillShareResponse {
 
-public class CustomBillShareResponse{
     private final String text;
     private final String fullAccountInfo;
     private final String paymentLink;
@@ -15,10 +14,10 @@ public class CustomBillShareResponse{
 
     public String toDiscordMessage() {
         return """
-                👉 %s
-                
-                🏦 계좌정보: `%s`
-                """.formatted(text, paymentLink);
+            👉 %s
+            
+            🏦 계좌정보: `%s`
+            """.formatted(text, paymentLink);
     }
 //
 //    public String toDiscordMessage() {
