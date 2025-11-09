@@ -1,4 +1,4 @@
-package greedy.greedybot.presentation.jda.listener;
+package greedy.greedybot.presentation.jda.listener.message;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

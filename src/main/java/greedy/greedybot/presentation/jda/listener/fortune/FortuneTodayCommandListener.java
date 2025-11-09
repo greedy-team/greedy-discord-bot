@@ -1,7 +1,8 @@
-package greedy.greedybot.presentation.jda.listener;
+package greedy.greedybot.presentation.jda.listener.fortune;
 
 import greedy.greedybot.application.fortune.FortuneService;
 import greedy.greedybot.common.exception.GreedyBotException;
+import greedy.greedybot.presentation.jda.listener.SlashCommandListener;
 import greedy.greedybot.presentation.jda.role.DiscordRole;
 import java.time.LocalDate;
 import java.util.Set;

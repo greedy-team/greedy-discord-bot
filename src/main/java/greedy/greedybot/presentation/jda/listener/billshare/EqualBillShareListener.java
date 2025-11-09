@@ -1,10 +1,11 @@
-package greedy.greedybot.presentation.jda.listener;
+package greedy.greedybot.presentation.jda.listener.billshare;
 
 import greedy.greedybot.application.billshare.BillShareService;
-import greedy.greedybot.application.billshare.CustomBillShareResponse;
+import greedy.greedybot.application.billshare.EqualBillShareResponse;
 import greedy.greedybot.common.exception.GreedyBotException;
 import greedy.greedybot.domain.billshare.BankInfo;
-import greedy.greedybot.domain.billshare.CustomBillShare;
+import greedy.greedybot.domain.billshare.EqualBillShare;
+import greedy.greedybot.presentation.jda.listener.AutoCompleteInteractionListener;
 import greedy.greedybot.presentation.jda.role.DiscordRole;
 import java.util.Arrays;
 import java.util.List;
@@ -24,27 +25,28 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CustomBillShareListener implements AutoCompleteInteractionListener {
+public class EqualBillShareListener implements AutoCompleteInteractionListener {
 
-    private static final Logger log = LoggerFactory.getLogger(CustomBillShareListener.class);
+    private static final Logger log = LoggerFactory.getLogger(EqualBillShareListener.class);
     private final BillShareService billShareService;
 
     @Value("${discord.billshare_channel_id}")
     private Long allowedChannelId;
 
-    public CustomBillShareListener(BillShareService billShareService) {
+    public EqualBillShareListener(BillShareService billShareService) {
         this.billShareService = billShareService;
     }
 
     @Override
     public String getCommandName() {
-        return "billshare-custom";
+        return "billshare-equal";
     }
 
     @Override
     public SlashCommandData getCommandData() {
-        return Commands.slash(this.getCommandName(), "일반 정산하기!")
-            .addOption(OptionType.STRING, "text", "정산 요청할 멤버들과 각각의 결제 금액을 자유로운 형태로 입력하세요.", true)
+        return Commands.slash(this.getCommandName(), "n분의 1 정산하기!")
+            .addOption(OptionType.INTEGER, "totalamount", "총 결제 금액을 입력해주세요 (1/n 분할 전 전체 금액)", true)
+            .addOption(OptionType.STRING, "members", "정산 요청할 멤버들을 '@이름' 형태로 입력하세요. 본인은 제외하고 입력해주세요.", true)
             .addOption(OptionType.STRING, "bank", "정산받을 은행명을 입력해주세요", true, true)
             .addOption(OptionType.STRING, "accountnumber", "정산받을 계좌번호를 입력해주세요 (숫자만 공백없이 입력)", true);
     }
@@ -53,7 +55,8 @@ public class CustomBillShareListener implements AutoCompleteInteractionListener 
     public void onAction(final @NotNull SlashCommandInteractionEvent event) {
         validateAllowedChannel(event);
 
-        final String text = event.getOption("text").getAsString();
+        final int totalAmount = event.getOption("totalamount").getAsInt();
+        final String mentionRaw = event.getOption("members").getAsString();
         final String bankInput = event.getOption("bank").getAsString();
         final String accountNumber = event.getOption("accountnumber").getAsString();
 
@@ -62,17 +65,19 @@ public class CustomBillShareListener implements AutoCompleteInteractionListener 
             throw new GreedyBotException("❌ 알 수 없는 은행명입니다: " + bankInput);
         }
 
-        String memberName = text.trim();
+        String memberName = mentionRaw.trim();
         int memberCount = memberName.split("\\s+").length;
 
-        final CustomBillShare customBillShare = new CustomBillShare(
-            text,
+        final EqualBillShare equalBillShare = new EqualBillShare(
+            memberCount,
+            totalAmount,
             bankInfo,
-            accountNumber
+            accountNumber,
+            memberName
         );
         log.info("✅ 메시지가 전송되었습니다.");
 
-        final CustomBillShareResponse response = billShareService.customBillShare(customBillShare);
+        final EqualBillShareResponse response = billShareService.equalBillShare(equalBillShare);
 
         event.reply(response.toDiscordMessage()).queue();
     }

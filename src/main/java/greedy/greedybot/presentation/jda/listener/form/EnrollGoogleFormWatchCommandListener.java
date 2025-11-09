@@ -1,7 +1,8 @@
-package greedy.greedybot.presentation.jda.listener;
+package greedy.greedybot.presentation.jda.listener.form;
 
 import greedy.greedybot.application.googleform.GoogleFormService;
 import greedy.greedybot.application.googleform.dto.EnrollFormWatchResult;
+import greedy.greedybot.presentation.jda.listener.SlashCommandListener;
 import greedy.greedybot.presentation.jda.role.DiscordRole;
 import java.util.Objects;
 import java.util.Set;

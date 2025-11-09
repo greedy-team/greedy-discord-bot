@@ -1,7 +1,7 @@
 package greedy.greedybot.presentation.jda.configuration;
 
-import greedy.greedybot.presentation.jda.listener.ScheduledMessageModalLauncher;
-import greedy.greedybot.presentation.jda.listener.ScheduledMessageSubmitListener;
+import greedy.greedybot.presentation.jda.listener.message.ScheduledMessageModalLauncher;
+import greedy.greedybot.presentation.jda.listener.message.ScheduledMessageSubmitListener;
 import greedy.greedybot.presentation.jda.listener.SlashCommandListenerMapper;
 import java.util.EnumSet;
 import net.dv8tion.jda.api.JDA;
