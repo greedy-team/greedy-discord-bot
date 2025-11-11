@@ -30,15 +30,19 @@ public class ScheduledMessage {
     public String getId() {
         return id;
     }
+
     public String getContent() {
         return content;
     }
+
     public LocalDateTime getScheduledTime() {
         return scheduledTime;
     }
+
     public String getUserId() {
         return userId;
     }
+
     public String getChannelId() {
         return channelId;
     }

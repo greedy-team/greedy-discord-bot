@@ -1,6 +1,7 @@
-package greedy.greedybot.presentation.jda.listener;
+package greedy.greedybot.presentation.jda.listener.message;
 
 import greedy.greedybot.common.exception.GreedyBotException;
+import greedy.greedybot.presentation.jda.listener.SlashCommandListener;
 import greedy.greedybot.presentation.jda.role.DiscordRole;
 import greedy.greedybot.presentation.jda.role.ScheduledMessageChannel;
 import java.util.Map;

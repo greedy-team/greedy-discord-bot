@@ -1,4 +1,4 @@
-package greedy.greedybot.presentation.jda.listener;
+package greedy.greedybot.presentation.jda.listener.message;
 
 import greedy.greedybot.application.message.ScheduledMessageService;
 import greedy.greedybot.common.exception.GreedyBotException;

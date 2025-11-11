@@ -1,11 +1,17 @@
-package greedy.greedybot.presentation.jda.listener;
+package greedy.greedybot.presentation.jda.listener.billshare;
 
 import greedy.greedybot.application.billshare.BillShareService;
-import greedy.greedybot.application.billshare.EqualBillShareResponse;
+import greedy.greedybot.application.billshare.CustomBillShareResponse;
 import greedy.greedybot.common.exception.GreedyBotException;
 import greedy.greedybot.domain.billshare.BankInfo;
-import greedy.greedybot.domain.billshare.EqualBillShare;
+import greedy.greedybot.domain.billshare.CustomBillShare;
+import greedy.greedybot.presentation.jda.listener.AutoCompleteInteractionListener;
 import greedy.greedybot.presentation.jda.role.DiscordRole;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -18,45 +24,37 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 @Component
-public class EqualBillShareListener implements AutoCompleteInteractionListener {
+public class CustomBillShareListener implements AutoCompleteInteractionListener {
 
-    private static final Logger log = LoggerFactory.getLogger(EqualBillShareListener.class);
+    private static final Logger log = LoggerFactory.getLogger(CustomBillShareListener.class);
     private final BillShareService billShareService;
 
     @Value("${discord.billshare_channel_id}")
     private Long allowedChannelId;
 
-    public EqualBillShareListener(BillShareService billShareService) {
+    public CustomBillShareListener(BillShareService billShareService) {
         this.billShareService = billShareService;
     }
 
     @Override
     public String getCommandName() {
-        return "billshare-equal";
+        return "billshare-custom";
     }
 
     @Override
     public SlashCommandData getCommandData() {
-        return Commands.slash(this.getCommandName(), "n분의 1 정산하기!")
-                .addOption(OptionType.INTEGER, "totalamount", "총 결제 금액을 입력해주세요 (1/n 분할 전 전체 금액)", true)
-                .addOption(OptionType.STRING, "members", "정산 요청할 멤버들을 '@이름' 형태로 입력하세요. 본인은 제외하고 입력해주세요.", true)
-                .addOption(OptionType.STRING, "bank", "정산받을 은행명을 입력해주세요", true, true)
-                .addOption(OptionType.STRING, "accountnumber", "정산받을 계좌번호를 입력해주세요 (숫자만 공백없이 입력)", true);
+        return Commands.slash(this.getCommandName(), "일반 정산하기!")
+            .addOption(OptionType.STRING, "text", "정산 요청할 멤버들과 각각의 결제 금액을 자유로운 형태로 입력하세요.", true)
+            .addOption(OptionType.STRING, "bank", "정산받을 은행명을 입력해주세요", true, true)
+            .addOption(OptionType.STRING, "accountnumber", "정산받을 계좌번호를 입력해주세요 (숫자만 공백없이 입력)", true);
     }
 
     @Override
     public void onAction(final @NotNull SlashCommandInteractionEvent event) {
         validateAllowedChannel(event);
 
-        final int totalAmount = event.getOption("totalamount").getAsInt();
-        final String mentionRaw = event.getOption("members").getAsString();
+        final String text = event.getOption("text").getAsString();
         final String bankInput = event.getOption("bank").getAsString();
         final String accountNumber = event.getOption("accountnumber").getAsString();
 
@@ -65,19 +63,17 @@ public class EqualBillShareListener implements AutoCompleteInteractionListener {
             throw new GreedyBotException("❌ 알 수 없는 은행명입니다: " + bankInput);
         }
 
-        String memberName = mentionRaw.trim();
+        String memberName = text.trim();
         int memberCount = memberName.split("\\s+").length;
 
-        final EqualBillShare equalBillShare = new EqualBillShare(
-                memberCount,
-                totalAmount,
-                bankInfo,
-                accountNumber,
-                memberName
+        final CustomBillShare customBillShare = new CustomBillShare(
+            text,
+            bankInfo,
+            accountNumber
         );
         log.info("✅ 메시지가 전송되었습니다.");
 
-        final EqualBillShareResponse response = billShareService.equalBillShare(equalBillShare);
+        final CustomBillShareResponse response = billShareService.customBillShare(customBillShare);
 
         event.reply(response.toDiscordMessage()).queue();
     }
@@ -89,16 +85,16 @@ public class EqualBillShareListener implements AutoCompleteInteractionListener {
         }
 
         List<Command.Choice> choices = BANK_INFO_TO_ENUM.keySet().stream()
-                .filter(name -> name.startsWith(event.getFocusedOption().getValue()))
-                .map(name -> new Command.Choice(name, name))
-                .toList();
+            .filter(name -> name.startsWith(event.getFocusedOption().getValue()))
+            .map(name -> new Command.Choice(name, name))
+            .toList();
 
         event.replyChoices(choices).queue();
         log.info("[✅ BANK AUTOCOMPLETE SUCCESS]");
     }
 
     private static final Map<String, BankInfo> BANK_INFO_TO_ENUM = Arrays.stream(BankInfo.values())
-            .collect(Collectors.toMap(BankInfo::getBankName, bankInfo -> bankInfo));
+        .collect(Collectors.toMap(BankInfo::getBankName, bankInfo -> bankInfo));
 
     private void validateAllowedChannel(final @NotNull SlashCommandInteractionEvent event) {
         if (event.getChannel().getIdLong() != allowedChannelId) {

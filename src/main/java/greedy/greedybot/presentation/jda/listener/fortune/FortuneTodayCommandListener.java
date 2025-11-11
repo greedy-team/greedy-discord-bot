@@ -1,7 +1,8 @@
-package greedy.greedybot.presentation.jda.listener;
+package greedy.greedybot.presentation.jda.listener.fortune;
 
 import greedy.greedybot.application.fortune.FortuneService;
 import greedy.greedybot.common.exception.GreedyBotException;
+import greedy.greedybot.presentation.jda.listener.SlashCommandListener;
 import greedy.greedybot.presentation.jda.role.DiscordRole;
 import java.time.LocalDate;
 import java.util.Set;
@@ -49,9 +50,9 @@ public class FortuneTodayCommandListener implements SlashCommandListener {
         event.deferReply().queue();
         final String result = fortuneService.findTodayFortuneByKey(userId, today);
         event.getHook().sendMessage("""
-                **%s**님의 오늘의 운세!
-                %s
-                """.formatted(nickname, result)).queue();
+            **%s**님의 오늘의 운세!
+            %s
+            """.formatted(nickname, result)).queue();
     }
 
     private void validateAllowedChannel(final @NotNull SlashCommandInteractionEvent event) {

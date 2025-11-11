@@ -62,11 +62,11 @@ public class MatchingService {
         }
 
         final Map<String, List<String>> matchedReviewers = reviewers.stream()
-                .collect(Collectors.toMap(
-                        key -> key,
-                        value -> new ArrayList<>(),
-                        (existing, replacement) -> existing
-                ));
+            .collect(Collectors.toMap(
+                key -> key,
+                value -> new ArrayList<>(),
+                (existing, replacement) -> existing
+            ));
 
         final List<String> removableReviewees = new ArrayList<>(reviewees);
         for (final String reviewer : reviewers) {
@@ -89,7 +89,7 @@ public class MatchingService {
     // ex) 리뷰어: [a, a, c] 리뷰이: [a, a, d] -> 매칭 불가능
     private boolean validateNumberOfCases(final List<String> reviewees, final List<String> reviewers) {
         final Map<String, Long> countByReviewerName = reviewers.stream()
-                .collect(Collectors.groupingBy(it -> it, Collectors.counting()));
+            .collect(Collectors.groupingBy(it -> it, Collectors.counting()));
 
         for (final String reviewee : reviewees) {
             long nonSameNameCount = reviewers.size() - countByReviewerName.getOrDefault(reviewee, 0L);

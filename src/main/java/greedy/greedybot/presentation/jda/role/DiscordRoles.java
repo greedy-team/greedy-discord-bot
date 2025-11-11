@@ -12,9 +12,9 @@ public class DiscordRoles {
 
     public DiscordRoles(final DiscordRoleProperty discordRoleProperty) {
         this.idsByDiscordRole = Map.of(
-                DiscordRole.LEAD, discordRoleProperty.leadId(),
-                DiscordRole.MEMBER, discordRoleProperty.memberId(),
-                DiscordRole.COLLABORATOR, discordRoleProperty.collaboratorId()
+            DiscordRole.LEAD, discordRoleProperty.leadId(),
+            DiscordRole.MEMBER, discordRoleProperty.memberId(),
+            DiscordRole.COLLABORATOR, discordRoleProperty.collaboratorId()
         );
     }
 

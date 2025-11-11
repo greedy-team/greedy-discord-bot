@@ -1,8 +1,10 @@
-package greedy.greedybot.presentation.jda.listener;
+package greedy.greedybot.presentation.jda.listener.matching;
 
 import greedy.greedybot.application.matching.MatchingService;
 import greedy.greedybot.application.matching.dto.MatchingResult;
 import greedy.greedybot.common.exception.GreedyBotException;
+import greedy.greedybot.presentation.jda.listener.AutoCompleteInteractionListener;
+import greedy.greedybot.presentation.jda.listener.InCommandButtonInteractionListener;
 import greedy.greedybot.presentation.jda.role.DiscordRole;
 import java.util.Arrays;
 import java.util.List;
@@ -31,12 +33,12 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
 
     private static final Logger log = LoggerFactory.getLogger(ReviewMatchListener.class);
     private static final List<String> reviewees = List.of(
-            "BE-3기: 이고은, 김하늘, 하수한, 강동현, 서현진, 김태우",
-            "FE-3기: 강건, 심혁, 윤재홍, 강예령"
+        "BE-3기: 이고은, 김하늘, 하수한, 강동현, 서현진, 김태우",
+        "FE-3기: 강건, 심혁, 윤재홍, 강예령"
     );
     private static final List<String> reviewers = List.of(
-            "BE-3기: 백경환, 정다빈, 남해윤, 김준수, 신혜빈, 정상희, 조승현",
-            "FE-3기: 김민석, 정수영, 김의천, 최혜령"
+        "BE-3기: 백경환, 정다빈, 남해윤, 김준수, 신혜빈, 정상희, 조승현",
+        "FE-3기: 김민석, 정수영, 김의천, 최혜령"
     );
     private static final String REMATCH_BUTTON_ID = "rematch";
     private static final String CONFIRM_BUTTON_ID = "matching-confirm";
@@ -48,7 +50,7 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
     private final MatchingService matchingService;
 
     public ReviewMatchListener(
-            final MatchingService matchingService
+        final MatchingService matchingService
     ) {
         this.matchingService = matchingService;
     }
@@ -61,9 +63,9 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
     @Override
     public SlashCommandData getCommandData() {
         return Commands.slash(this.getCommandName(), "리뷰어 리뷰이 매칭")
-                .addOption(OptionType.STRING, "mission", "미션 이름", true)
-                .addOption(OptionType.STRING, "reviewee", "리뷰이", true, true)
-                .addOption(OptionType.STRING, "reviewer", "리뷰어", true, true);
+            .addOption(OptionType.STRING, "mission", "미션 이름", true)
+            .addOption(OptionType.STRING, "reviewee", "리뷰이", true, true)
+            .addOption(OptionType.STRING, "reviewer", "리뷰어", true, true);
     }
 
     @Override
@@ -96,12 +98,12 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
 
         final String result = match(matchSessionId);
         event.getHook().sendMessage(result)
-                .setEphemeral(true)
-                .addActionRow(
-                        Button.primary(REMATCH_BUTTON_ID + ":" + matchSessionId, "\n🔄 재시도"),
-                        Button.success(CONFIRM_BUTTON_ID + ":" + matchSessionId, "✅ 확정")
-                )
-                .queue();
+            .setEphemeral(true)
+            .addActionRow(
+                Button.primary(REMATCH_BUTTON_ID + ":" + matchSessionId, "\n🔄 재시도"),
+                Button.success(CONFIRM_BUTTON_ID + ":" + matchSessionId, "✅ 확정")
+            )
+            .queue();
     }
 
     private String match(final String matchSessionId) {
@@ -116,7 +118,7 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
         log.info("[START MATCHING] : {}", mission);
         final MatchingResult matchingResultAnnouncement = matchingService.matchStudy(reviewees, reviewers);
         final String result =
-                "[**" + mission + "** 리뷰어 매칭 결과]\n\n" + matchingResultAnnouncement.toDiscordAnnouncement();
+            "[**" + mission + "** 리뷰어 매칭 결과]\n\n" + matchingResultAnnouncement.toDiscordAnnouncement();
         resultSessions.put(matchSessionId, result);
         return result;
     }
@@ -142,11 +144,11 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
     }
 
     private List<Command.Choice> setOptions(final List<String> greedyMembers,
-                                            final CommandAutoCompleteInteractionEvent event) {
+        final CommandAutoCompleteInteractionEvent event) {
         return greedyMembers.stream()
-                .filter(member -> member.startsWith(event.getFocusedOption().getValue()))
-                .map(member -> new Command.Choice(member, member))
-                .collect(Collectors.toList());
+            .filter(member -> member.startsWith(event.getFocusedOption().getValue()))
+            .map(member -> new Command.Choice(member, member))
+            .collect(Collectors.toList());
     }
 
     private boolean isRevieweeAutoCompleteEvent(final CommandAutoCompleteInteractionEvent event) {
@@ -160,15 +162,15 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
 
     private List<String> extractNamesFromRawString(String rawString) {
         return Arrays.stream(rawString
-                        .split(":")[1]
-                        .trim()
-                        .split(","))
-                .map(String::trim)
-                .collect(Collectors.toList());
+                .split(":")[1]
+                .trim()
+                .split(","))
+            .map(String::trim)
+            .collect(Collectors.toList());
     }
 
     private void validateOptions(final OptionMapping optionMission, final OptionMapping optionReviewees,
-                                 final OptionMapping optionReviewers) {
+        final OptionMapping optionReviewers) {
         if (Objects.isNull(optionMission)) {
             log.warn("[EMPTY MISSION]");
             throw new GreedyBotException("\uD83D\uDEAB 미션 정보가 입력 되지 않았습니다.");
@@ -206,8 +208,8 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
             log.info("[RETRY MATCHING]");
             final String result = match(matchSessionId);
             event.editMessage(result).setActionRow(
-                    Button.primary(REMATCH_BUTTON_ID + ":" + matchSessionId, "🔄 재시도"),
-                    Button.success(CONFIRM_BUTTON_ID + ":" + matchSessionId, "✅ 확정")
+                Button.primary(REMATCH_BUTTON_ID + ":" + matchSessionId, "🔄 재시도"),
+                Button.success(CONFIRM_BUTTON_ID + ":" + matchSessionId, "✅ 확정")
             ).queue();
             resultSessions.put(matchSessionId, result);
             return;
@@ -221,8 +223,8 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
                 event.reply("❌ 리뷰어 리뷰이 매칭 결과가 존재하지 않습니다. 다시 시도해주세요.").setEphemeral(true).queue();
             }
             event.editMessage("✅ **매칭 확정!**\n결과를 채널에 공개적으로 전송했습니다.")
-                    .setComponents()
-                    .queue();
+                .setComponents()
+                .queue();
             clearSession(matchSessionId);
             event.getChannel().sendMessage(result).queue();
             return;

@@ -1,7 +1,8 @@
-package greedy.greedybot.presentation.jda.listener;
+package greedy.greedybot.presentation.jda.listener.form;
 
 import greedy.greedybot.application.googleform.GoogleFormService;
 import greedy.greedybot.application.googleform.dto.EnrollFormWatchResult;
+import greedy.greedybot.presentation.jda.listener.SlashCommandListener;
 import greedy.greedybot.presentation.jda.role.DiscordRole;
 import java.util.Objects;
 import java.util.Set;
@@ -35,9 +36,9 @@ public class EnrollGoogleFormWatchCommandListener implements SlashCommandListene
     @Override
     public SlashCommandData getCommandData() {
         return Commands.slash(this.getCommandName(), "Add google form watch")
-                .addOption(OptionType.STRING, FORM_ID_KEY, """
-                        Google form id where it is https://docs.google.com/forms/d/{formId}
-                        """);
+            .addOption(OptionType.STRING, FORM_ID_KEY, """
+                Google form id where it is https://docs.google.com/forms/d/{formId}
+                """);
     }
 
     @Override
@@ -55,11 +56,11 @@ public class EnrollGoogleFormWatchCommandListener implements SlashCommandListene
         final EnrollFormWatchResult result = googleFormService.enrollFormWatch(formId);
         log.info("[ENROLL FORM WATCH]: {}", result);
         event.getHook().sendMessage("""
-                        ✅ 구글폼 응답 구독이 등록 되었어요!
-                        - 제목: %s
-                        - 등록된 응답 수: %d
-                        """.formatted(result.formTitle(), result.responseCount()))
-                .queue();
+                ✅ 구글폼 응답 구독이 등록 되었어요!
+                - 제목: %s
+                - 등록된 응답 수: %d
+                """.formatted(result.formTitle(), result.responseCount()))
+            .queue();
     }
 
     @Override

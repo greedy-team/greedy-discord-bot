@@ -1,6 +1,5 @@
 package greedy.greedybot.application.fortune;
 
-import greedy.greedybot.common.exception.GreedyBotException;
 import greedy.greedybot.domain.fortune.FortuneStaticRepository;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

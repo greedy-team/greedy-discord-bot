@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RandomShuffleStrategy implements ShuffleStrategy {
+
     @Override
     public void shuffle(List<String> list) {
         Collections.shuffle(list);
