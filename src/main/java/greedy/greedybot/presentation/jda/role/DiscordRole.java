@@ -4,4 +4,5 @@ public enum DiscordRole {
     LEAD,
     MEMBER,
     COLLABORATOR,
+    DEVELOPER,
 }

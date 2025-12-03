@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record DiscordRoleProperty(
         long leadId,
         long memberId,
-        long collaboratorId
+        long collaboratorId,
+        long developerId
 ) {
 }

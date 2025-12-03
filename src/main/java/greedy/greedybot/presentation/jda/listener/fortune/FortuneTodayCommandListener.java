@@ -64,6 +64,6 @@ public class FortuneTodayCommandListener implements SlashCommandListener {
 
     @Override
     public Set<DiscordRole> allowedRoles() {
-        return Set.of(DiscordRole.MEMBER, DiscordRole.COLLABORATOR, DiscordRole.LEAD);
+        return Set.of(DiscordRole.MEMBER, DiscordRole.COLLABORATOR, DiscordRole.LEAD, DiscordRole.DEVELOPER);
     }
 }
