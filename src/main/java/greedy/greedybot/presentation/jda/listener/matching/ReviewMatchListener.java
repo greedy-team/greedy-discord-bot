@@ -125,7 +125,7 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
 
     @Override
     public Set<DiscordRole> allowedRoles() {
-        return Set.of(DiscordRole.LEAD);
+        return Set.of(DiscordRole.LEAD, DiscordRole.DEVELOPER);
     }
 
     @Override

@@ -65,6 +65,6 @@ public class EnrollGoogleFormWatchCommandListener implements SlashCommandListene
 
     @Override
     public Set<DiscordRole> allowedRoles() {
-        return Set.of(DiscordRole.LEAD);
+        return Set.of(DiscordRole.LEAD, DiscordRole.DEVELOPER);
     }
 }
