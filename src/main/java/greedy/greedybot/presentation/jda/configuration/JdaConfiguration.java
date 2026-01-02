@@ -3,7 +3,9 @@ package greedy.greedybot.presentation.jda.configuration;
 import greedy.greedybot.presentation.jda.listener.message.ScheduledMessageModalLauncher;
 import greedy.greedybot.presentation.jda.listener.message.ScheduledMessageSubmitListener;
 import greedy.greedybot.presentation.jda.listener.SlashCommandListenerMapper;
+
 import java.util.EnumSet;
+
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -30,10 +32,12 @@ public class JdaConfiguration {
     private String googleFormChannelId;
     @Value("${discord.scheduled_message_channel_id}")
     private String scheduledMessageChannelId;
+    @Value("${discord.birthday_channel_id}")
+    private String scheculeBirthdayChannelId;
 
     public JdaConfiguration(SlashCommandListenerMapper slashCommandListenerMapper,
-        ScheduledMessageModalLauncher scheduledMessageModalLauncher,
-        ScheduledMessageSubmitListener scheduledMessageSubmitListener) {
+                            ScheduledMessageModalLauncher scheduledMessageModalLauncher,
+                            ScheduledMessageSubmitListener scheduledMessageSubmitListener) {
         this.slashCommandListenerMapper = slashCommandListenerMapper;
         this.scheduledMessageModalLauncher = scheduledMessageModalLauncher;
         this.scheduledMessageSubmitListener = scheduledMessageSubmitListener;
@@ -53,8 +57,8 @@ public class JdaConfiguration {
                 .setActivity(Activity.listening("메세지 입력"))
                 .setStatus(OnlineStatus.ONLINE)
                 .addEventListeners( // 수동 입력
-                    slashCommandListenerMapper,
-                    scheduledMessageSubmitListener
+                        slashCommandListenerMapper,
+                        scheduledMessageSubmitListener
                 )
                 .enableIntents(intents)
                 .build()
@@ -75,4 +79,10 @@ public class JdaConfiguration {
     TextChannel scheduledMessageChannel(final JDA jda) {
         return jda.getTextChannelById(scheduledMessageChannelId);
     }
+
+    @Bean
+    TextChannel birthdayChannel(final JDA jda) {
+        return jda.getTextChannelById(scheculeBirthdayChannelId);
+    }
+
 }
