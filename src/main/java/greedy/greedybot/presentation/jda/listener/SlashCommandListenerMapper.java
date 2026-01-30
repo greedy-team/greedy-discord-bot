@@ -1,6 +1,5 @@
 package greedy.greedybot.presentation.jda.listener;
 
-import greedy.greedybot.common.exception.GreedyBotException;
 import greedy.greedybot.presentation.jda.role.DiscordRole;
 import greedy.greedybot.presentation.jda.role.DiscordRoles;
 import java.util.List;
@@ -39,16 +38,18 @@ public class SlashCommandListenerMapper extends ListenerAdapter {
         if (!hasRole(event, slashCommand.allowedRoles())) {
             log.warn("[COMMAND PERMISSION DENIED]: {}", event.getMember().getNickname());
             event.reply("이 명령어를 사용할 권한이 없습니다.").setEphemeral(true).queue();
+            return;
         }
 
         try {
             slashCommand.onAction(event);
-        } catch (GreedyBotException e) {
-            log.warn("[WARN]: {}", e.getMessage());
-            event.reply("❌" + e.getMessage()).setEphemeral(true).queue();
         } catch (Exception e) {
-            log.error("[ERROR OCCURRED]: {}, {}", commandName, e.getStackTrace());
-            event.getHook().sendMessage(e.getMessage()).queue();
+            log.error("[SLASH EXCEPTION] cmd={}", commandName, e);
+            if (!event.isAcknowledged()) {
+                event.reply("❌ 서버 오류가 발생했습니다.").setEphemeral(true).queue();
+            } else {
+                event.getHook().sendMessage("❌ 서버 오류가 발생했습니다.").setEphemeral(true).queue();
+            }
         }
     }
 
