@@ -86,6 +86,6 @@ public class BirthdayAddCommandListener implements SlashCommandListener {
 
     @Override
     public Set<DiscordRole> allowedRoles() {
-        return Set.of(DiscordRole.MEMBER);
+        return Set.of(DiscordRole.DEVELOPER);
     }
 }
