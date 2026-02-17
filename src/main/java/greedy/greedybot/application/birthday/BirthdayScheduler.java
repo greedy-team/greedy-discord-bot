@@ -30,12 +30,11 @@ public class BirthdayScheduler {
 
     }
 
-    //@Scheduled(cron = "0 0 0 * * *")
+    //@Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
     @Scheduled(fixedDelay = 30000)
     public void checkBirthdays() {
         List<Birthday> birthdays = service.findTodayBirthdays();
         if (birthdays.isEmpty()) {
-            log.info("📢 오늘 생일자가 없습니다!");
             return;
         }
 
@@ -54,14 +53,10 @@ public class BirthdayScheduler {
     }
 
     private void sendBirthdayMessage(TextChannel channel, Birthday birthday) {
-        String message = "오늘은 <@%s> (**%s**)님의 생일입니다!".formatted(
-                birthday.getUserId(),
-                birthday.getUserName()
-        );
+        String mention = "<@%s>".formatted(birthday.getUserId());
+
+        String message = "%s 오늘은 **%s**님의 생일입니다!".formatted(mention, birthday.getUserName());
         channel.sendMessage(message).queue();
-        log.info("📢 오늘의 생일은 : {} {}",
-                birthday.getUserId(),
-                birthday.getUserName());
     }
 
     private void sendTodayClosingMessage(TextChannel channel) {
