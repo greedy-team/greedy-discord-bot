@@ -57,9 +57,7 @@ public class BirthdayService {
     }
 
     public String pickMessage(LocalDate today) {
-        //final long randomSeed = today.toEpochDay();
         final int[] probabilityBox = messageTodayData.probabilityBox();
-       // final int todayMessageIndex = new Random(randomSeed).nextInt(probabilityBox.length);
         final int todayMessageIndex = new Random().nextInt(probabilityBox.length);
         return birthdayStaticRepository.getMessageByIndex(probabilityBox[todayMessageIndex]);
     }
