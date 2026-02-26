@@ -42,41 +42,39 @@ public class BirthdayAddCommandListener implements SlashCommandListener {
     @Override
     public SlashCommandData getCommandData() {
         return Commands.slash(getCommandName(), "생일 등록")
-                .addOption(OptionType.STRING, "userid", "디스코드 아이디", true)
-                .addOption(OptionType.STRING, "username", "이름", true)
-                .addOption(OptionType.STRING, "birthday", "생일은 MM-DD형식으로 입력해주세요", true);
+                .addOption(OptionType.STRING, "birthday", "생일은 MM-DD 형식으로 입력해주세요. (예시: 04-19)", true);
 
     }
 
     @Override
     public void onAction(@NotNull SlashCommandInteractionEvent event) {
         try {
-            OptionMapping idOpt = event.getOption("userid");
-            OptionMapping nameOpt = event.getOption("username");
             OptionMapping dateOpt = event.getOption("birthday");
-
-            if (idOpt == null || nameOpt == null || dateOpt == null) {
-                event.reply("아이디, 이름, 생일을 다시 확인해주세요!").setEphemeral(true).queue();
+            if (dateOpt == null) {
+                event.reply("생일을 다시 확인해주세요!").setEphemeral(true).queue();
                 return;
             }
 
-            String userId = idOpt.getAsString().trim();
-            String userName = nameOpt.getAsString().trim();
             String stringDate = dateOpt.getAsString().trim();
-
+            String userId = event.getUser().getId();
+            String userName = event.getMember() != null
+                    ? event.getMember().getEffectiveName()
+                    : event.getUser().getName();
             MonthDay date;
             try {
+
                 date = MonthDay.parse(stringDate, MM_DD);
             } catch (DateTimeParseException e) {
-                log.error("날짜 형식 오류", e);
+                log.warn("날짜 형식 오류: userId={}, userName={}, input={}", userId, userName, stringDate);
                 event.reply("날짜 형식이 잘못되었습니다!").setEphemeral(true).queue();
                 return;
             }
+
             Birthday birthday = new Birthday(userId, userName, date);
             birthdayService.register(birthday);
-            log.info("생일 등록 성공 Id:{} Name:{} Date:{}", userId, userName, stringDate);
+            log.info("생일 등록 성공 userId={}, userName={}, input={}", userId, userName, stringDate);
 
-            event.reply("생일 등록 완료! [" + userName + "/" + stringDate + "]").queue();
+            event.reply("생일 등록 완료! [" + userName + ":" + stringDate + "]").setEphemeral(true).queue();
 
         } catch (GreedyBotException e) {
             log.error("생일 등록 실패", e);
@@ -86,6 +84,6 @@ public class BirthdayAddCommandListener implements SlashCommandListener {
 
     @Override
     public Set<DiscordRole> allowedRoles() {
-        return Set.of(DiscordRole.DEVELOPER);
+        return Set.of(DiscordRole.MEMBER);
     }
 }
