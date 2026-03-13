@@ -191,7 +191,7 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
     }
 
     private void validateReviewerAndRevieweeType(final String revieweeType, final String reviewerType) {
-        if (!revieweeType.equals(reviewerType)) {
+        if (!reviewerType.contains(revieweeType)) {
             log.warn("[REVIEWER AND REVIEWEE STUDY TYPE DISMATCH]");
             throw new GreedyBotException("\uD83D\uDEAB 리뷰어 리뷰이 스터디 타입 정보가 일치 하지 않습니다.");
         }
