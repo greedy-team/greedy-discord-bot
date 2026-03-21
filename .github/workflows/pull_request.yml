@@ -1,0 +1,57 @@
+name: discord bot CI
+
+on:
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  checks: write
+  pull-requests: write
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+          cache: 'gradle'
+
+      - name: Apply application secrets
+        run: |
+          cd ./src/main/resources
+          touch ./${{ secrets.APPLICATION_PROFILE_FILE }}
+          echo "${{ secrets.APPLICATION_PROFILE }}" > ./${{ secrets.APPLICATION_PROFILE_FILE }}
+
+      - name: Apply google credentials
+        run: |
+          cd ./src/main/resources
+          mkdir -p ${{ secrets.GOOGLE_CREDENTIAL_PATH }}
+          cd ${{ secrets.GOOGLE_CREDENTIAL_PATH }}
+          touch ./${{ secrets.GOOGLE_CREDENTIAL_FILE }}
+          echo "${{ secrets.GOOGLE_CREDENTIAL }}" | base64 --decode > ./${{ secrets.GOOGLE_CREDENTIAL_FILE }}
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Gradle build and test
+        run: ./gradlew clean build
+
+      - name: 테스트 결과를 빌드 디렉토리에 생성
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: build/test-results/test/TEST-*.xml
+
+      - name: 테스트 결과를 PR에 코멘트로 작성
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          report_paths: build/test-results/test/TEST-*.xml

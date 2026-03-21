@@ -33,12 +33,15 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
 
     private static final Logger log = LoggerFactory.getLogger(ReviewMatchListener.class);
     private static final List<String> reviewees = List.of(
-        "BE-3기: 이고은, 김하늘, 하수한, 강동현, 서현진, 김태우",
-        "FE-3기: 강건, 심혁, 윤재홍, 강예령"
+        "BE-4기: 이태규, 김민욱, 이채현, 정명준, 김하은, 강대현",
+        "FE-4기: 천동현, 김동건, 홍의민, 고규민"
     );
     private static final List<String> reviewers = List.of(
-        "BE-3기: 백경환, 정다빈, 남해윤, 김준수, 신혜빈, 정상희, 조승현",
-        "FE-3기: 김민석, 정수영, 김의천, 최혜령"
+        "BE-4기(Java): 정다빈, 조상준, 이진, 이창희, 남해윤, 하수한",
+        "BE-4기(Spring): 정다빈, 조상준, 이진, 김민기, 김수민, 신혜빈",
+        "FE-4기(1차): 정창우, 김의천, 임규영, 송혜정",
+        "FE-4기(2차): 김범수, 김의천, 임규영, 송혜정",
+        "FE-4기(3차): 박찬빈, 김의천, 임규영, 송혜정"
     );
     private static final String REMATCH_BUTTON_ID = "rematch";
     private static final String CONFIRM_BUTTON_ID = "matching-confirm";
@@ -188,7 +191,7 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
     }
 
     private void validateReviewerAndRevieweeType(final String revieweeType, final String reviewerType) {
-        if (!revieweeType.equals(reviewerType)) {
+        if (!reviewerType.contains(revieweeType)) {
             log.warn("[REVIEWER AND REVIEWEE STUDY TYPE DISMATCH]");
             throw new GreedyBotException("\uD83D\uDEAB 리뷰어 리뷰이 스터디 타입 정보가 일치 하지 않습니다.");
         }
