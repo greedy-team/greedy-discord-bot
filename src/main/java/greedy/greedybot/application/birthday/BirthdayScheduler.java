@@ -21,7 +21,7 @@ public class BirthdayScheduler {
     private final JDA jda;
     private final BirthdayService service;
 
-    @Value("${discord.birthday_message_channel_id}")
+    @Value("${discord.birthday_db_channel_id}")
     private String channelId;
 
     public BirthdayScheduler(@Lazy JDA jda, BirthdayService service) {
@@ -31,7 +31,7 @@ public class BirthdayScheduler {
     }
 
     //@Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
-    @Scheduled(fixedDelay = 30000)
+    //@Scheduled(fixedDelay = 30000)
     public void checkBirthdays() {
         List<Birthday> birthdays = service.findTodayBirthdays();
         if (birthdays.isEmpty()) {
@@ -45,23 +45,14 @@ public class BirthdayScheduler {
             return;
         }
 
-        for (Birthday birthday : birthdays) {
-            sendBirthdayMessage(channel, birthday);
-        }
+        String mentions = birthdays.stream()
+                .map(b -> "<@%s>".formatted(b.getUserId()))
+                .reduce((a, b) -> a + ", " + b)
+                .orElse("");
+        String body = service.pickMessage(LocalDate.now());
+        String message = "%s %s".formatted(mentions, body);
 
-        sendTodayClosingMessage(channel);
-    }
-
-    private void sendBirthdayMessage(TextChannel channel, Birthday birthday) {
-        String mention = "<@%s>".formatted(birthday.getUserId());
-
-        String message = "%s 오늘은 **%s**님의 생일입니다!".formatted(mention, birthday.getUserName());
         channel.sendMessage(message).queue();
-    }
-
-    private void sendTodayClosingMessage(TextChannel channel) {
-        String message = service.pickMessage(LocalDate.now());
-        channel.sendMessage(message).queue();
-        log.info("생일축하 완료");
+        log.info("생일축하 완료: {}", mentions);
     }
 }

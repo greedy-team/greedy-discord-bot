@@ -16,25 +16,24 @@ import java.util.Optional;
 public class BirthdayDiscordRepository implements BirthdayRepository {
     private static final DateTimeFormatter MM_DD = DateTimeFormatter.ofPattern("MM-dd");
 
-    private final TextChannel birhtdayChannel;
+    private final TextChannel birthdayChannel;
 
     public BirthdayDiscordRepository(@Lazy TextChannel birthdayChannel) {
-        this.birhtdayChannel = birthdayChannel;
+        this.birthdayChannel = birthdayChannel;
     }
-
     @Override
-    public void save(Birthday birthday) {
-        birhtdayChannel.sendMessage(
-                birthday.getId() + "|"
-                        + birthday.getUserId() + "|"
-                        + birthday.getUserName() + "|"
-                        + birthday.getBirthday().format(MM_DD)
+    public void save(Birthday message) {
+        birthdayChannel.sendMessage(
+                message.getId() + "|"
+                        + message.getUserId() + "|"
+                        + message.getUserName() + "|"
+                        + message.getBirthday().format(MM_DD)
         ).queue();
     }
 
     @Override
     public void delete(String userId) {
-        birhtdayChannel.getHistory().retrievePast(50).complete()
+        birthdayChannel.getHistory().retrievePast(50).complete()
                 .stream()
                 .filter(message -> {
                     String[] parts = message.getContentRaw().split("\\|");
@@ -49,7 +48,7 @@ public class BirthdayDiscordRepository implements BirthdayRepository {
 
     @Override
     public Optional<Birthday> findByUserId(String userId) {
-        return birhtdayChannel.getHistory().retrievePast(50).complete()
+        return birthdayChannel.getHistory().retrievePast(50).complete()
                 .stream()
                 .filter(message -> {
                     String[] parts = message.getContentRaw().split("\\|");
@@ -69,7 +68,7 @@ public class BirthdayDiscordRepository implements BirthdayRepository {
 
     @Override
     public List<Birthday> findAll() {
-        List<Message> messages = birhtdayChannel.getHistory().retrievePast(50).complete();
+        List<Message> messages = birthdayChannel.getHistory().retrievePast(50).complete();
         List<Birthday> result = new ArrayList<>();
         for (Message message : messages) {
             String[] parts = message.getContentRaw().split("\\|");
@@ -91,7 +90,7 @@ public class BirthdayDiscordRepository implements BirthdayRepository {
 
     @Override
     public List<Birthday> findByMonthDay(int month, int day) {
-        List<Message> messages = birhtdayChannel.getHistory().retrievePast(50).complete();
+        List<Message> messages = birthdayChannel.getHistory().retrievePast(50).complete();
         List<Birthday> result = new ArrayList<>();
         for (Message message : messages) {
             String[] parts = message.getContentRaw().split("\\|");
@@ -114,7 +113,7 @@ public class BirthdayDiscordRepository implements BirthdayRepository {
 
     @Override
     public void clearAll() {
-        List<Message> messages = birhtdayChannel.getHistory().retrievePast(100).complete();
+        List<Message> messages = birthdayChannel.getHistory().retrievePast(100).complete();
         for (Message message : messages) {
             String[] parts = message.getContentRaw().split("\\|");
             if (parts.length != 4) continue;

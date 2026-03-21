@@ -19,20 +19,22 @@ import static java.security.SecureRandom.getSeed;
 public class BirthdayService {
     private final BirthdayRepository birthdayRepository;
     private final BirthdayStaticRepository birthdayStaticRepository;
-    private final MessageTodayData messageTodayData;
 
     public BirthdayService(BirthdayRepository repository,
-                           MessageTodayData messageTodayData,
                            BirthdayStaticRepository birthdayStaticRepository) {
         this.birthdayRepository = repository;
-        this.messageTodayData = messageTodayData;
         this.birthdayStaticRepository = birthdayStaticRepository;
     }
 
     public void register(Birthday birthday) {
-        if (birthdayRepository.findByUserId(birthday.getUserId()).isPresent()) {
-            throw new GreedyBotException("이미 생일이 등록되어 있습니다.");
-        }
+//        if (birthdayRepository.findByUserId(birthday.getUserId()).isPresent()) {
+//            delete(birthday.getUserId());
+//        }
+//        birthdayRepository.findByUserId(birthday.getUserId())
+//                .ifPresent(existing -> {
+//                    birthdayRepository.delete(birthday.getUserId());
+//                });
+
         birthdayRepository.save(birthday);
     }
 
@@ -57,9 +59,7 @@ public class BirthdayService {
     }
 
     public String pickMessage(LocalDate today) {
-        final int[] probabilityBox = messageTodayData.probabilityBox();
-        final int todayMessageIndex = new Random().nextInt(probabilityBox.length);
-        return birthdayStaticRepository.getMessageByIndex(probabilityBox[todayMessageIndex]);
+        return birthdayStaticRepository.getMessageBySeason(today.getMonthValue());
     }
 
     public void clearAll() {

@@ -21,12 +21,15 @@ public class SlashCommandListenerMapper extends ListenerAdapter {
     private static final Logger log = LoggerFactory.getLogger(SlashCommandListenerMapper.class);
 
     private final Map<String, SlashCommandListener> slashCommandListenersByCommandName;
+    private final List<GlobalButtonListener> globalButtonListeners;
     private final DiscordRoles discordRoles;
 
     public SlashCommandListenerMapper(final Set<SlashCommandListener> slashCommandListeners,
+                                      final List<GlobalButtonListener> globalButtonListeners,
                                       final DiscordRoles discordRoles) {
         this.slashCommandListenersByCommandName = slashCommandListeners.stream()
                 .collect(Collectors.toMap(SlashCommandListener::getCommandName, it -> it));
+        this.globalButtonListeners = globalButtonListeners;
         this.discordRoles = discordRoles;
     }
 
@@ -78,17 +81,25 @@ public class SlashCommandListenerMapper extends ListenerAdapter {
         final String buttonComponentId = event.getComponentId();
         log.info("[RECEIVED DISCORD BUTTON COMMAND] : {}", buttonComponentId);
 
+        final List<GlobalButtonListener> globalSupportingListeners = globalButtonListeners.stream()
+                .filter(listener -> listener.isSupportingButtonId(buttonComponentId))
+                .toList();
+        if (globalSupportingListeners.size() == 1) {
+            globalSupportingListeners.getFirst().onButtonInteraction(event);
+            return;
+        }
+
         final List<InCommandButtonInteractionListener> buttonListeners = slashCommandListenersByCommandName.values().stream()
                 .filter(listener -> listener instanceof InCommandButtonInteractionListener)
                 .map(listener -> (InCommandButtonInteractionListener) listener)
                 .filter(listener -> listener.isSupportingButtonId(buttonComponentId))
                 .toList();
-
         if (buttonListeners.size() != 1) { // 두개 이상, 또는 없는 경우
             log.warn("[MULTIPLE BUTTON COMMANDS FOUND]: {}", buttonComponentId);
             event.reply("❌ 지원하지 않는 버튼입니다: " + buttonComponentId)
                     .setEphemeral(true)
                     .queue();
+            return;
         }
 
         final InCommandButtonInteractionListener buttonListener = buttonListeners.getFirst();
