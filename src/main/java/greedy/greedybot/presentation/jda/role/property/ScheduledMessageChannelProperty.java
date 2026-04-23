@@ -8,6 +8,7 @@ public record ScheduledMessageChannelProperty(
         long greedyBackendStudy,
         long greedyFrontendStudy,
         long leadLeadConversation,
+        long maintainer4,
         long tfDiscordTestGroud
 ) {
 }

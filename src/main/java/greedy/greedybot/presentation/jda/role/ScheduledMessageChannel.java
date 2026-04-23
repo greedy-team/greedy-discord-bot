@@ -5,5 +5,6 @@ public enum ScheduledMessageChannel {
     BACKEND,
     FRONT,
     LEAD_CONVERSATION,
+    MAINTAINER_4,
     TEST
 }
