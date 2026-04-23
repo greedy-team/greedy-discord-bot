@@ -28,6 +28,7 @@ public class ScheduledMessageCommandListener implements SlashCommandListener {
         "🍃백엔드-스터디", ScheduledMessageChannel.BACKEND,
         "\uD83E\uDD8B프론트엔드-스터디", ScheduledMessageChannel.FRONT,
         "\uD83E\uDEE7리드-대화", ScheduledMessageChannel.LEAD_CONVERSATION,
+        "\uD83C\uDF594기-메인테이너-대화", ScheduledMessageChannel.MAINTAINER_4,
         "tf-discord-test-ground", ScheduledMessageChannel.TEST
     );
 

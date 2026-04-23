@@ -15,6 +15,7 @@ public class ScheduledMessageChannels {
             ScheduledMessageChannel.NOTICE, scheduledMessageChannelProperty.greedyNoticeId(),
             ScheduledMessageChannel.BACKEND, scheduledMessageChannelProperty.greedyBackendStudy(),
             ScheduledMessageChannel.FRONT, scheduledMessageChannelProperty.greedyFrontendStudy(),
+            ScheduledMessageChannel.MAINTAINER_4, scheduledMessageChannelProperty.maintainer4(),
             ScheduledMessageChannel.TEST, scheduledMessageChannelProperty.tfDiscordTestGroud()
         );
     }
