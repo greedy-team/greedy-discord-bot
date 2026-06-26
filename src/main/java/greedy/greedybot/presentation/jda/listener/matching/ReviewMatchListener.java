@@ -41,7 +41,7 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
         "BE-4기(Spring): 정다빈, 조상준, 이진, 김민기, 김수민, 신혜빈",
         "FE-4기(1차): 정창우, 김의천, 임규영, 송혜정",
         "FE-4기(2차): 김범수, 김의천, 임규영, 송혜정",
-        "FE-4기(3차): 박찬빈, 김의천, 임규영, 송혜정"
+        "FE-4기(3차): 심혁, 김의천, 임규영, 송혜정"
     );
     private static final String REMATCH_BUTTON_ID = "rematch";
     private static final String CONFIRM_BUTTON_ID = "matching-confirm";
