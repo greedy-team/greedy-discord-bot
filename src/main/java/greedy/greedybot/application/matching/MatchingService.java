@@ -18,11 +18,15 @@ public class MatchingService {
         this.shuffleStrategy = shuffleStrategy;
     }
 
+    // 전달 받은 목록을 그대로 섞으면 호출측 목록이 변경 되므로 복사본을 섞는다
     public MatchingResult matchStudy(final List<String> reviewees, final List<String> reviewers) {
-        shuffleStrategy.shuffle(reviewers);
-        shuffleStrategy.shuffle(reviewees);
-        final List<String> alignedReviewer = alignReviewerByRevieweeSize(reviewees.size(), reviewers);
-        return match(reviewees, alignedReviewer);
+        final List<String> shuffledReviewees = new ArrayList<>(reviewees);
+        final List<String> shuffledReviewers = new ArrayList<>(reviewers);
+        shuffleStrategy.shuffle(shuffledReviewers);
+        shuffleStrategy.shuffle(shuffledReviewees);
+        final List<String> alignedReviewer =
+            alignReviewerByRevieweeSize(shuffledReviewees.size(), shuffledReviewers);
+        return match(shuffledReviewees, alignedReviewer);
     }
 
     private List<String> alignReviewerByRevieweeSize(final int revieweeSize, final List<String> shuffledReviewers) {
