@@ -76,15 +76,14 @@ public class MatchingService {
             .collect(Collectors.toSet());
     }
 
+    // 리뷰어와 리뷰이는 순서대로 짝지어지므로 한쪽만 섞어도 모든 조합이 나온다. 양쪽 다 섞을 필요는 없다
     // 전달 받은 목록을 그대로 섞으면 호출측 목록이 변경 되므로 복사본을 섞는다
     private MatchingResult matchOnce(final List<String> reviewees, final List<String> reviewers) {
-        final List<String> shuffledReviewees = new ArrayList<>(reviewees);
         final List<String> shuffledReviewers = new ArrayList<>(reviewers);
         shuffleStrategy.shuffle(shuffledReviewers);
-        shuffleStrategy.shuffle(shuffledReviewees);
         final List<String> alignedReviewer =
-            alignReviewerByRevieweeSize(shuffledReviewees.size(), shuffledReviewers);
-        return match(shuffledReviewees, alignedReviewer);
+            alignReviewerByRevieweeSize(reviewees.size(), shuffledReviewers);
+        return match(reviewees, alignedReviewer);
     }
 
     // 리뷰어는 항상 리뷰이 이상이므로, 리뷰이 사람 수 만큼 리뷰어를 선택한다
