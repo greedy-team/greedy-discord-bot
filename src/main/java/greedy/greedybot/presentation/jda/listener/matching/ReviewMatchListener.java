@@ -2,22 +2,25 @@ package greedy.greedybot.presentation.jda.listener.matching;
 
 import greedy.greedybot.application.matching.MatchingService;
 import greedy.greedybot.application.matching.dto.MatchingResult;
+import greedy.greedybot.application.study.StudyGroupService;
 import greedy.greedybot.common.exception.GreedyBotException;
+import greedy.greedybot.domain.matching.MatchHistory;
+import greedy.greedybot.domain.matching.MatchHistoryRepository;
+import greedy.greedybot.domain.study.StudyGroup;
+import greedy.greedybot.domain.study.StudyRole;
 import greedy.greedybot.presentation.jda.listener.AutoCompleteInteractionListener;
 import greedy.greedybot.presentation.jda.listener.InCommandButtonInteractionListener;
+import greedy.greedybot.presentation.jda.listener.study.StudyGroupChoices;
 import greedy.greedybot.presentation.jda.role.DiscordRole;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -32,30 +35,32 @@ import org.springframework.stereotype.Component;
 public class ReviewMatchListener implements AutoCompleteInteractionListener, InCommandButtonInteractionListener {
 
     private static final Logger log = LoggerFactory.getLogger(ReviewMatchListener.class);
-    private static final List<String> reviewees = List.of(
-        "BE-4기: 이태규, 김민욱, 이채현, 정명준, 김하은, 강대현",
-        "FE-4기: 천동현, 김동건, 홍의민, 고규민"
-    );
-    private static final List<String> reviewers = List.of(
-        "BE-4기(Java): 정다빈, 조상준, 이진, 이창희, 남해윤, 하수한",
-        "BE-4기(Spring): 정다빈, 조상준, 이진, 김민기, 김수민, 신혜빈",
-        "FE-4기(1차): 정창우, 김의천, 임규영, 송혜정",
-        "FE-4기(2차): 김범수, 김의천, 임규영, 송혜정",
-        "FE-4기(3차): 심혁, 김의천, 임규영, 송혜정"
-    );
+
+    private static final String MISSION_OPTION = "mission";
+    private static final String REVIEWEE_OPTION = "reviewee";
+    private static final String REVIEWER_OPTION = "reviewer";
     private static final String REMATCH_BUTTON_ID = "rematch";
     private static final String CONFIRM_BUTTON_ID = "matching-confirm";
     private static final Map<String, List<String>> reviewerSessions = new ConcurrentHashMap<>();
     private static final Map<String, List<String>> revieweeSessions = new ConcurrentHashMap<>();
     private static final Map<String, String> missionNameSession = new ConcurrentHashMap<>();
     private static final Map<String, String> resultSessions = new ConcurrentHashMap<>();
+    private static final Map<String, String> revieweeGroupIdSessions = new ConcurrentHashMap<>();
+    private static final Map<String, MatchHistory> previousMatchSessions = new ConcurrentHashMap<>();
+    private static final Map<String, Map<String, String>> matchedPairSessions = new ConcurrentHashMap<>();
 
     private final MatchingService matchingService;
+    private final StudyGroupService studyGroupService;
+    private final MatchHistoryRepository matchHistoryRepository;
 
     public ReviewMatchListener(
-        final MatchingService matchingService
+        final MatchingService matchingService,
+        final StudyGroupService studyGroupService,
+        final MatchHistoryRepository matchHistoryRepository
     ) {
         this.matchingService = matchingService;
+        this.studyGroupService = studyGroupService;
+        this.matchHistoryRepository = matchHistoryRepository;
     }
 
     @Override
@@ -66,37 +71,40 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
     @Override
     public SlashCommandData getCommandData() {
         return Commands.slash(this.getCommandName(), "리뷰어 리뷰이 매칭")
-            .addOption(OptionType.STRING, "mission", "미션 이름", true)
-            .addOption(OptionType.STRING, "reviewee", "리뷰이", true, true)
-            .addOption(OptionType.STRING, "reviewer", "리뷰어", true, true);
+            .addOption(OptionType.STRING, MISSION_OPTION, "미션 이름", true)
+            .addOption(OptionType.STRING, REVIEWEE_OPTION, "리뷰이 그룹", true, true)
+            .addOption(OptionType.STRING, REVIEWER_OPTION, "리뷰어 그룹", true, true);
     }
 
     @Override
     public void onAction(@NotNull final SlashCommandInteractionEvent event) {
-        final OptionMapping optionMission = event.getOption("mission");
-        final OptionMapping optionReviewees = event.getOption("reviewee");
-        final OptionMapping optionReviewers = event.getOption("reviewer");
+        final OptionMapping optionMission = event.getOption(MISSION_OPTION);
+        final OptionMapping optionReviewees = event.getOption(REVIEWEE_OPTION);
+        final OptionMapping optionReviewers = event.getOption(REVIEWER_OPTION);
 
         validateOptions(optionMission, optionReviewees, optionReviewers);
 
         final String mission = optionMission.getAsString();
-        final String revieweesRawString = optionReviewees.getAsString();
-        final String reviewersRawString = optionReviewers.getAsString();
+        final StudyGroup revieweeGroup =
+            studyGroupService.getByIdAndRole(optionReviewees.getAsString(), StudyRole.REVIEWEE);
+        final StudyGroup reviewerGroup =
+            studyGroupService.getByIdAndRole(optionReviewers.getAsString(), StudyRole.REVIEWER);
 
-        final String revieweeType = getStudyType(revieweesRawString);
-        final String reviewerType = getStudyType(reviewersRawString);
-
-        validateReviewerAndRevieweeType(revieweeType, reviewerType);
+        studyGroupService.validateSameStudy(revieweeGroup, reviewerGroup);
 
         event.deferReply().setEphemeral(true).queue();
         log.info("[SUCCESS TO GET EVENT]");
-        final List<String> reviewees = extractNamesFromRawString(revieweesRawString);
-        final List<String> reviewers = extractNamesFromRawString(reviewersRawString);
+
+        final MatchHistory previousMatch = matchHistoryRepository.findByRevieweeGroupId(revieweeGroup.id())
+            .orElseGet(() -> MatchHistory.empty(revieweeGroup.id()));
+        log.info("[PREVIOUS MATCH LOADED] : {} ({}건)", revieweeGroup.id(), previousMatch.reviewerByReviewee().size());
 
         final String matchSessionId = UUID.randomUUID().toString().substring(0, 8);
         missionNameSession.put(matchSessionId, mission);
-        reviewerSessions.put(matchSessionId, reviewers);
-        revieweeSessions.put(matchSessionId, reviewees);
+        reviewerSessions.put(matchSessionId, reviewerGroup.members());
+        revieweeSessions.put(matchSessionId, revieweeGroup.members());
+        revieweeGroupIdSessions.put(matchSessionId, revieweeGroup.id());
+        previousMatchSessions.put(matchSessionId, previousMatch);
         log.info("[MATCHING SESSIONS SAVED] : {}", matchSessionId);
 
         final String result = match(matchSessionId);
@@ -115,14 +123,18 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
         final List<String> reviewers = reviewerSessions.get(matchSessionId);
         if (Objects.isNull(reviewees) || Objects.isNull(reviewers) || mission.isBlank()) {
             log.warn("[REVIEWER OR REVIEWEE SESSIONS NOT FOUND]");
-            throw new GreedyBotException("\uD83D\uDEAB 리뷰어 또는 리뷰이 세션이 존재하지 않습니다. 다시 시도해주세요.");
+            throw new GreedyBotException("🚫 리뷰어 또는 리뷰이 세션이 존재하지 않습니다. 다시 시도해주세요.");
         }
 
         log.info("[START MATCHING] : {}", mission);
-        final MatchingResult matchingResultAnnouncement = matchingService.matchStudy(reviewees, reviewers);
+        final MatchHistory previousMatch = previousMatchSessions.getOrDefault(
+            matchSessionId, MatchHistory.empty(matchSessionId));
+        final MatchingResult matchingResultAnnouncement =
+            matchingService.matchStudy(reviewees, reviewers, previousMatch);
         final String result =
             "[**" + mission + "** 리뷰어 매칭 결과]\n\n" + matchingResultAnnouncement.toDiscordAnnouncement();
         resultSessions.put(matchSessionId, result);
+        matchedPairSessions.put(matchSessionId, matchingResultAnnouncement.toReviewerByReviewee());
         return result;
     }
 
@@ -133,72 +145,41 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
 
     @Override
     public void onCommandAutoCompleteInteraction(@NotNull final CommandAutoCompleteInteractionEvent event) {
-        if (isRevieweeAutoCompleteEvent(event)) {
-            List<Command.Choice> options = setOptions(reviewees, event);
-            event.replyChoices(options).queue();
+        final String focusedOptionName = event.getFocusedOption().getName();
+        final String focusedValue = event.getFocusedOption().getValue();
+
+        if (REVIEWEE_OPTION.equals(focusedOptionName)) {
+            event.replyChoices(
+                StudyGroupChoices.from(studyGroupService.findAllByRole(StudyRole.REVIEWEE), focusedValue)
+            ).queue();
             log.info("[SUCCESS TO GET REVIEWEE OPTIONS]");
+            return;
         }
 
-        if (isReviewerAutoCompleteEvent(event)) {
-            List<Command.Choice> options = setOptions(reviewers, event);
-            event.replyChoices(options).queue();
+        if (REVIEWER_OPTION.equals(focusedOptionName)) {
+            event.replyChoices(
+                StudyGroupChoices.from(studyGroupService.findAllByRole(StudyRole.REVIEWER), focusedValue)
+            ).queue();
             log.info("[SUCCESS TO GET REVIEWER OPTIONS]");
         }
-    }
-
-    private List<Command.Choice> setOptions(final List<String> greedyMembers,
-        final CommandAutoCompleteInteractionEvent event) {
-        return greedyMembers.stream()
-            .filter(member -> member.startsWith(event.getFocusedOption().getValue()))
-            .map(member -> new Command.Choice(member, member))
-            .collect(Collectors.toList());
-    }
-
-    private boolean isRevieweeAutoCompleteEvent(final CommandAutoCompleteInteractionEvent event) {
-        return event.getName().equals("review-match") && event.getFocusedOption().getName().equals("reviewee");
-
-    }
-
-    private boolean isReviewerAutoCompleteEvent(final CommandAutoCompleteInteractionEvent event) {
-        return event.getName().equals("review-match") && event.getFocusedOption().getName().equals("reviewer");
-    }
-
-    private List<String> extractNamesFromRawString(String rawString) {
-        return Arrays.stream(rawString
-                .split(":")[1]
-                .trim()
-                .split(","))
-            .map(String::trim)
-            .collect(Collectors.toList());
     }
 
     private void validateOptions(final OptionMapping optionMission, final OptionMapping optionReviewees,
         final OptionMapping optionReviewers) {
         if (Objects.isNull(optionMission)) {
             log.warn("[EMPTY MISSION]");
-            throw new GreedyBotException("\uD83D\uDEAB 미션 정보가 입력 되지 않았습니다.");
+            throw new GreedyBotException("🚫 미션 정보가 입력 되지 않았습니다.");
         }
 
         if (Objects.isNull(optionReviewees)) {
             log.warn("[EMPTY REVIEWEES]");
-            throw new GreedyBotException("\uD83D\uDEAB 리뷰이 정보가 입력 되지 않았습니다.");
+            throw new GreedyBotException("🚫 리뷰이 정보가 입력 되지 않았습니다.");
         }
 
         if (Objects.isNull(optionReviewers)) {
             log.warn("[EMPTY REVIEWERS]");
-            throw new GreedyBotException("\uD83D\uDEAB 리뷰어 정보가 입력 되지 않았습니다.");
+            throw new GreedyBotException("🚫 리뷰어 정보가 입력 되지 않았습니다.");
         }
-    }
-
-    private void validateReviewerAndRevieweeType(final String revieweeType, final String reviewerType) {
-        if (!reviewerType.contains(revieweeType)) {
-            log.warn("[REVIEWER AND REVIEWEE STUDY TYPE DISMATCH]");
-            throw new GreedyBotException("\uD83D\uDEAB 리뷰어 리뷰이 스터디 타입 정보가 일치 하지 않습니다.");
-        }
-    }
-
-    private String getStudyType(final String groupInfo) {
-        return groupInfo.split(":")[0];
     }
 
     @Override
@@ -224,7 +205,9 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
             if (Objects.isNull(result)) {
                 log.warn("[RESULT SESSION NOT FOUND]");
                 event.reply("❌ 리뷰어 리뷰이 매칭 결과가 존재하지 않습니다. 다시 시도해주세요.").setEphemeral(true).queue();
+                return;
             }
+            saveMatchHistory(matchSessionId);
             event.editMessage("✅ **매칭 확정!**\n결과를 채널에 공개적으로 전송했습니다.")
                 .setComponents()
                 .queue();
@@ -236,11 +219,27 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
         log.warn("[UNSUPPORTED BUTTON COMMAND]: {}", buttonId);
     }
 
+    // 확정된 매칭만 다음 매칭의 비교 대상이 된다
+    private void saveMatchHistory(final String matchSessionId) {
+        final String revieweeGroupId = revieweeGroupIdSessions.get(matchSessionId);
+        final Map<String, String> matchedPairs = matchedPairSessions.get(matchSessionId);
+        if (Objects.isNull(revieweeGroupId) || Objects.isNull(matchedPairs)) {
+            log.warn("[MATCH HISTORY SESSION NOT FOUND] : {}", matchSessionId);
+            return;
+        }
+        final String mission = missionNameSession.getOrDefault(matchSessionId, "");
+        matchHistoryRepository.saveMatchHistory(new MatchHistory(revieweeGroupId, mission, matchedPairs));
+        log.info("[MATCH HISTORY SAVED] : {}", revieweeGroupId);
+    }
+
     private void clearSession(final String matchSessionId) {
         reviewerSessions.remove(matchSessionId);
         revieweeSessions.remove(matchSessionId);
         missionNameSession.remove(matchSessionId);
         resultSessions.remove(matchSessionId);
+        revieweeGroupIdSessions.remove(matchSessionId);
+        previousMatchSessions.remove(matchSessionId);
+        matchedPairSessions.remove(matchSessionId);
     }
 
     @Override
