@@ -4,6 +4,8 @@ import greedy.greedybot.application.matching.MatchingService;
 import greedy.greedybot.application.matching.dto.MatchingResult;
 import greedy.greedybot.application.study.StudyGroupService;
 import greedy.greedybot.common.exception.GreedyBotException;
+import greedy.greedybot.domain.matching.MatchHistory;
+import greedy.greedybot.domain.matching.MatchHistoryRepository;
 import greedy.greedybot.domain.study.StudyGroup;
 import greedy.greedybot.domain.study.StudyRole;
 import greedy.greedybot.presentation.jda.listener.AutoCompleteInteractionListener;
@@ -43,16 +45,22 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
     private static final Map<String, List<String>> revieweeSessions = new ConcurrentHashMap<>();
     private static final Map<String, String> missionNameSession = new ConcurrentHashMap<>();
     private static final Map<String, String> resultSessions = new ConcurrentHashMap<>();
+    private static final Map<String, String> revieweeGroupIdSessions = new ConcurrentHashMap<>();
+    private static final Map<String, MatchHistory> previousMatchSessions = new ConcurrentHashMap<>();
+    private static final Map<String, Map<String, String>> matchedPairSessions = new ConcurrentHashMap<>();
 
     private final MatchingService matchingService;
     private final StudyGroupService studyGroupService;
+    private final MatchHistoryRepository matchHistoryRepository;
 
     public ReviewMatchListener(
         final MatchingService matchingService,
-        final StudyGroupService studyGroupService
+        final StudyGroupService studyGroupService,
+        final MatchHistoryRepository matchHistoryRepository
     ) {
         this.matchingService = matchingService;
         this.studyGroupService = studyGroupService;
+        this.matchHistoryRepository = matchHistoryRepository;
     }
 
     @Override
@@ -87,10 +95,16 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
         event.deferReply().setEphemeral(true).queue();
         log.info("[SUCCESS TO GET EVENT]");
 
+        final MatchHistory previousMatch = matchHistoryRepository.findByRevieweeGroupId(revieweeGroup.id())
+            .orElseGet(() -> MatchHistory.empty(revieweeGroup.id()));
+        log.info("[PREVIOUS MATCH LOADED] : {} ({}건)", revieweeGroup.id(), previousMatch.reviewerByReviewee().size());
+
         final String matchSessionId = UUID.randomUUID().toString().substring(0, 8);
         missionNameSession.put(matchSessionId, mission);
         reviewerSessions.put(matchSessionId, reviewerGroup.members());
         revieweeSessions.put(matchSessionId, revieweeGroup.members());
+        revieweeGroupIdSessions.put(matchSessionId, revieweeGroup.id());
+        previousMatchSessions.put(matchSessionId, previousMatch);
         log.info("[MATCHING SESSIONS SAVED] : {}", matchSessionId);
 
         final String result = match(matchSessionId);
@@ -113,10 +127,14 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
         }
 
         log.info("[START MATCHING] : {}", mission);
-        final MatchingResult matchingResultAnnouncement = matchingService.matchStudy(reviewees, reviewers);
+        final MatchHistory previousMatch = previousMatchSessions.getOrDefault(
+            matchSessionId, MatchHistory.empty(matchSessionId));
+        final MatchingResult matchingResultAnnouncement =
+            matchingService.matchStudy(reviewees, reviewers, previousMatch);
         final String result =
             "[**" + mission + "** 리뷰어 매칭 결과]\n\n" + matchingResultAnnouncement.toDiscordAnnouncement();
         resultSessions.put(matchSessionId, result);
+        matchedPairSessions.put(matchSessionId, matchingResultAnnouncement.toReviewerByReviewee());
         return result;
     }
 
@@ -187,7 +205,9 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
             if (Objects.isNull(result)) {
                 log.warn("[RESULT SESSION NOT FOUND]");
                 event.reply("❌ 리뷰어 리뷰이 매칭 결과가 존재하지 않습니다. 다시 시도해주세요.").setEphemeral(true).queue();
+                return;
             }
+            saveMatchHistory(matchSessionId);
             event.editMessage("✅ **매칭 확정!**\n결과를 채널에 공개적으로 전송했습니다.")
                 .setComponents()
                 .queue();
@@ -199,11 +219,27 @@ public class ReviewMatchListener implements AutoCompleteInteractionListener, InC
         log.warn("[UNSUPPORTED BUTTON COMMAND]: {}", buttonId);
     }
 
+    // 확정된 매칭만 다음 매칭의 비교 대상이 된다
+    private void saveMatchHistory(final String matchSessionId) {
+        final String revieweeGroupId = revieweeGroupIdSessions.get(matchSessionId);
+        final Map<String, String> matchedPairs = matchedPairSessions.get(matchSessionId);
+        if (Objects.isNull(revieweeGroupId) || Objects.isNull(matchedPairs)) {
+            log.warn("[MATCH HISTORY SESSION NOT FOUND] : {}", matchSessionId);
+            return;
+        }
+        final String mission = missionNameSession.getOrDefault(matchSessionId, "");
+        matchHistoryRepository.saveMatchHistory(new MatchHistory(revieweeGroupId, mission, matchedPairs));
+        log.info("[MATCH HISTORY SAVED] : {}", revieweeGroupId);
+    }
+
     private void clearSession(final String matchSessionId) {
         reviewerSessions.remove(matchSessionId);
         revieweeSessions.remove(matchSessionId);
         missionNameSession.remove(matchSessionId);
         resultSessions.remove(matchSessionId);
+        revieweeGroupIdSessions.remove(matchSessionId);
+        previousMatchSessions.remove(matchSessionId);
+        matchedPairSessions.remove(matchSessionId);
     }
 
     @Override

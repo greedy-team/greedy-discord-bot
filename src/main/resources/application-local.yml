@@ -24,6 +24,7 @@ discord:
   fortune_today_channel_id: 1111111111111111111
   scheduled_message_channel_id: 11111
   study_group_channel_id: 1111111111111111111
+  match_history_channel_id: 1111111111111111111
 
   role:
     lead_id: 11111

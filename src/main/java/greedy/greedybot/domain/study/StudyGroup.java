@@ -17,7 +17,7 @@ public record StudyGroup(
 ) {
 
     // 저장 포맷의 구분자와 충돌 하는 문자는 id, 멤버 이름에 사용할 수 없다
-    private static final Pattern FORBIDDEN_CHARACTERS = Pattern.compile("[|:,\\r\\n]");
+    private static final Pattern FORBIDDEN_CHARACTERS = Pattern.compile("[|:,>\\r\\n]");
     private static final int MIN_GENERATION = 1;
 
     public StudyGroup {
@@ -32,7 +32,7 @@ public record StudyGroup(
             throw new GreedyBotException("🚫 스터디 그룹 id가 비어 있습니다.");
         }
         if (FORBIDDEN_CHARACTERS.matcher(id).find()) {
-            throw new GreedyBotException("🚫 스터디 그룹 id에는 `|` `:` `,` 를 사용할 수 없습니다: " + id);
+            throw new GreedyBotException("🚫 스터디 그룹 id에는 `|` `:` `,` `>` 를 사용할 수 없습니다: " + id);
         }
     }
 
@@ -50,7 +50,7 @@ public record StudyGroup(
             .filter(member -> FORBIDDEN_CHARACTERS.matcher(member).find())
             .findAny()
             .ifPresent(member -> {
-                throw new GreedyBotException("🚫 멤버 이름에는 `|` `:` `,` 를 사용할 수 없습니다: " + member);
+                throw new GreedyBotException("🚫 멤버 이름에는 `|` `:` `,` `>` 를 사용할 수 없습니다: " + member);
             });
     }
 

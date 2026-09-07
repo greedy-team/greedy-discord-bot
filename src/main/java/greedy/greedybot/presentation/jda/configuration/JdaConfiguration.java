@@ -32,6 +32,8 @@ public class JdaConfiguration {
     private String scheduledMessageChannelId;
     @Value("${discord.study_group_channel_id}")
     private String studyGroupChannelId;
+    @Value("${discord.match_history_channel_id}")
+    private String matchHistoryChannelId;
 
     public JdaConfiguration(SlashCommandListenerMapper slashCommandListenerMapper,
         ScheduledMessageModalLauncher scheduledMessageModalLauncher,
@@ -82,5 +84,10 @@ public class JdaConfiguration {
     @Bean
     TextChannel studyGroupChannel(final JDA jda) {
         return jda.getTextChannelById(studyGroupChannelId);
+    }
+
+    @Bean
+    TextChannel matchHistoryChannel(final JDA jda) {
+        return jda.getTextChannelById(matchHistoryChannelId);
     }
 }
