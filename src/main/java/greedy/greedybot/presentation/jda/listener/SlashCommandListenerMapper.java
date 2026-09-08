@@ -67,6 +67,10 @@ public class SlashCommandListenerMapper extends ListenerAdapter {
 
     private boolean hasRole(final @NotNull SlashCommandInteractionEvent event,
                             final Set<DiscordRole> allowedRoles) {
+        // 허용 역할이 비어 있으면 역할을 검사하지 않는 공개 명령어다 (ex. /join)
+        if (allowedRoles.isEmpty()) {
+            return true;
+        }
         final Set<Long> allowedRoleIds = allowedRoles.stream()
                 .map(discordRoles::getRoleId)
                 .collect(Collectors.toSet());

@@ -34,6 +34,8 @@ public class JdaConfiguration {
     private String studyGroupChannelId;
     @Value("${discord.match_history_channel_id}")
     private String matchHistoryChannelId;
+    @Value("${discord.invite_code_channel_id}")
+    private String inviteCodeChannelId;
 
     public JdaConfiguration(SlashCommandListenerMapper slashCommandListenerMapper,
         ScheduledMessageModalLauncher scheduledMessageModalLauncher,
@@ -89,5 +91,11 @@ public class JdaConfiguration {
     @Bean
     TextChannel matchHistoryChannel(final JDA jda) {
         return jda.getTextChannelById(matchHistoryChannelId);
+    }
+
+    // 초대 코드 해시가 저장되는 채널. 운영진만 볼 수 있도록 권한을 설정해야 한다
+    @Bean
+    TextChannel inviteCodeChannel(final JDA jda) {
+        return jda.getTextChannelById(inviteCodeChannelId);
     }
 }
