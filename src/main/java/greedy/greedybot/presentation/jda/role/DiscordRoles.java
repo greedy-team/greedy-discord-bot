@@ -15,7 +15,8 @@ public class DiscordRoles {
             DiscordRole.LEAD, discordRoleProperty.leadId(),
             DiscordRole.MEMBER, discordRoleProperty.memberId(),
             DiscordRole.COLLABORATOR, discordRoleProperty.collaboratorId(),
-            DiscordRole.DEVELOPER, discordRoleProperty.developerId()
+            DiscordRole.DEVELOPER, discordRoleProperty.developerId(),
+            DiscordRole.MAINTAINER, discordRoleProperty.maintainerId()
         );
     }
 

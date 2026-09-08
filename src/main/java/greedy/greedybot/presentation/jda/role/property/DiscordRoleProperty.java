@@ -7,6 +7,7 @@ public record DiscordRoleProperty(
         long leadId,
         long memberId,
         long collaboratorId,
-        long developerId
+        long developerId,
+        long maintainerId
 ) {
 }

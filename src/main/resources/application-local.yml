@@ -25,11 +25,14 @@ discord:
   scheduled_message_channel_id: 11111
   study_group_channel_id: 1111111111111111111
   match_history_channel_id: 1111111111111111111
+  invite_code_channel_id: 1111111111111111111
 
   role:
     lead_id: 11111
     member_id: 1234
     collaborator_id: 1234
+    developer_id: 1234
+    maintainer_id: 1234
 
   data:
     fortune_today:
