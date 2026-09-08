@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -102,7 +103,13 @@ public class JoinCommandListener implements SlashCommandListener {
             log.error("[INVITE ROLE HIERARCHY] : {}", role.getName(), e);
             throw new GreedyBotException("🚫 봇의 역할이 %s 역할보다 아래에 있어 부여할 수 없습니다. 운영진에게 문의해주세요."
                 .formatted(role.getName()));
+        } catch (InsufficientPermissionException e) {
+            // JDA 가 요청을 보내기 전에 자체적으로 검사해서 던지므로 ErrorResponseException 으로는 잡히지 않는다
+            log.error("[INVITE ROLE PERMISSION] : {} ({})", role.getName(), e.getPermission(), e);
+            throw new GreedyBotException("🚫 봇에게 %s 권한이 없습니다. 운영진에게 문의해주세요."
+                .formatted(e.getPermission().getName()));
         } catch (ErrorResponseException e) {
+            // 권한 검사 통과 후 실제 요청에서 거절되는 경우 (검사 시점과 요청 시점 사이에 권한이 바뀐 경우 등)
             if (e.getErrorResponse() == ErrorResponse.MISSING_PERMISSIONS) {
                 log.error("[INVITE ROLE PERMISSION] : {}", role.getName(), e);
                 throw new GreedyBotException("🚫 봇에게 역할 관리 권한이 없습니다. 운영진에게 문의해주세요.");
